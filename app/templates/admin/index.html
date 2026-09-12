@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Administración
+{% endblock %}
+
+{% block content %}
+<h1>Administracion</h1>
+
+<h2>
+    Bienvenido, {{ usuario.nombre }}
+</h2>
+
+<p>
+    Rol: {{ usuario.rol }}
+</p>
+
+<h3>
+    Opciones administrativas
+</h3>
+
+<ul>
+    <li>Gestionar usuarios</li>
+    <li>Gestionar catálogo</li>
+    <li>Consultar bitácora</li>
+    <li>Modificar registros</li>
+    <li>Gestionar reportes excel</li>
+</ul>
+
+<a href="{{ url_for('bitacora.index') }}">
+    Regresar a bitacora
+</a>
+
+<br>
+<br>
+
+<a href="{{ url_for('auth.logout') }}">
+    Cerrar sesión
+</a>
+
+{% endblock %}

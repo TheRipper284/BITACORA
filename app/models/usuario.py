@@ -1,4 +1,5 @@
 from flask_login import UserMixin
+from werkzeug.security import generate_password_hash, check_password_hash
 
 from app.extensions import db
 
@@ -37,3 +38,18 @@ class Usuario(UserMixin, db.Model):
         nullable=False,
         default=True
     )
+
+    def establecer_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def verificar_password(self, password):
+        return check_password_hash(
+            self.password_hash,
+            password
+        )
+
+    def es_admin(self):
+        return self.rol == "ADMIN"
+
+    def es_registrador(self):
+        return self.rol == "REGISTRADOR"

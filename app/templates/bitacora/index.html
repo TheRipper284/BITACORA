@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Bitácora
+{% endblock %}
+
+{% block content %}
+
+<h1>Bitácora</h1>
+
+<h2>
+    Bienvenido, {{ usuario.nombre }}
+</h2>
+
+<p>
+    Usuario: {{ usuario.usuario }}
+</p>
+
+<p>
+    Rol: {{usuario.rol }}
+</p>
+
+<hr>
+
+<p>
+    Esta sera la pantalla principal de la bitacora
+</p>
+
+<a href="{{ url_for('auth.logout') }}">
+    Cerrar sesión
+</a>
+
+{% endblock %}
