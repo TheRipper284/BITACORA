@@ -1,8 +1,9 @@
 from datetime import date, datetime
-from flask import (Blueprint, render_template, request, redirect, url_for, flash)
+from flask import (Blueprint, render_template, request, redirect, url_for, flash, jsonify)
 from flask_login import (login_required, current_user)
 from app.models import (Empresa, Nave, Area, Personal, Auditor)
-from app.services.bitacora_service import (crear_registro)
+from app.services.bitacora_service import (crear_registro, registrar_salida)
+from app.extensions import db
 
 bitacora_bp = Blueprint(
     "bitacora",
@@ -13,9 +14,24 @@ bitacora_bp = Blueprint(
 @bitacora_bp.route("/")
 @login_required
 def index():
+    from app.models import RegistroBitacora
+
+    registros_activos = (
+        RegistroBitacora.query
+        .filter(
+            RegistroBitacora.hora_salida.is_(None)
+        )
+        .order_by(
+            RegistroBitacora.fecha.desc(),
+            RegistroBitacora.hora_entrada.desc()
+        )
+        .all()
+    )
+
     return render_template(
         "bitacora/index.html",
-        usuario=current_user
+        usuario = current_user,
+        registros_activos = registros_activos
     )
 
 @bitacora_bp.route(
@@ -186,4 +202,67 @@ def registrar():
         areas = areas,
         personal = personal,
         auditores = auditores
+    )
+
+@bitacora_bp.route("/api/areas/<int:nave_id>")
+@login_required
+def obtener_areas(nave_id):
+    areas = (
+        Area.query
+        .filter_by(
+            nave_id=nave_id,
+            activo=True
+        )
+        .order_by(Area.nombre)
+        .all()
+    )
+
+    return jsonify([
+        {
+            "id": area.id,
+            "nombre": area.nombre
+        }
+        for area in areas
+    ])
+
+@bitacora_bp.route(
+    "/salida/<int:registro_id>",
+    methods=["POST"]
+)
+@login_required
+def salida(registro_id):
+
+    from app.models import RegistroBitacora
+
+    registro = db.session.get(
+        RegistroBitacora,
+        registro_id
+    )
+
+    if not registro:
+
+        flash(
+            "El registro no existe.",
+            "error"
+        )
+
+        return redirect(
+            url_for("bitacora.index")
+        )
+
+    try:
+        registrar_salida(registro)
+        flash(
+            "Hora de salida registrada correctamente.",
+            "succes"
+        )
+
+    except ValueError as error:
+        flash(
+            str(error),
+            "error"
+        )
+
+    return redirect(
+        url_for("bitacora.index")
     )

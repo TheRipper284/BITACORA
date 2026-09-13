@@ -1,6 +1,7 @@
-from datetime import date, time
+from datetime import date, time, datetime
 from app.extensions import db
-from app.models import (RegistroBitacora, TipoRequerimiento)
+from app.models import (RegistroBitacora, TipoRequerimiento, Area)
+import re
 
 def obtener_siguiente_numero(fecha):
     ultimo = (
@@ -19,28 +20,42 @@ def obtener_siguiente_numero(fecha):
 def obtener_tipo_requerimiento(codigo):
     codigo = codigo.strip().upper()
 
-    if codigo.startswith("CR"):
-        prefijo = "CR"
-    elif codigo.startswith("IR"):
-        prefijo = "IR"
-    elif codigo.startswith("RR"):
-        prefijo = "RR"
-
-    else:
+    if not re.fullmatch(
+        r"(CR|IR|RR)\d+",
+        codigo
+    ):
         raise ValueError(
-            "El codigo debe de comenzar con CR, IR o RR."
+            "El código debe tener formato "
+            "CR21308038, IR21308038 o RR21308038."
         )
 
+    prefijo = codigo[:2]
+
     tipo = TipoRequerimiento.query.filter_by(
-        codigo=prefijo
+        codigo = prefijo
     ).first()
 
     if not tipo:
         raise ValueError(
-            "El tipi de requerimiento non existe."
+            "El tipo de requerimineto no existe."
         )
 
     return tipo
+
+def validar_area(area_id, nave_id):
+
+    area = Area.query.filter_by(
+        id=area_id,
+        nave_id=nave_id,
+        activo=True
+    ).first()
+
+    if not area:
+        raise ValueError(
+            "El área seleccionada no pertenece a la nave."
+        )
+
+    return area
 
 def crear_registro(
         fecha,
@@ -93,6 +108,20 @@ def crear_registro(
     )
 
     db.session.add(registro)
+    db.session.commit()
+
+    return registro
+
+def registrar_salida(registro):
+    if registro.hora_salida is not None:
+        raise ValueError(
+            "Este registro ya tiene hora de salida."
+        )
+
+    ahora = datetime.now()
+
+    registro.hora_salida = ahora.time()
+
     db.session.commit()
 
     return registro

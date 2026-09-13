@@ -55,7 +55,7 @@
 
         <div>
             <label for="empresa_id">
-                Emmpresa
+                Empresa
             </label>
             <select name="empresa_id" id="empresa_id" required>
                 <option value="">
@@ -116,9 +116,9 @@
             <label for="area_id">
                 Área
             </label>
-            <select name="area_id" id="area_id" required>
+            <select name="area_id" id="area_id" required disabled>
                 <option value="">
-                    Seleccinar área
+                    Selecciona primero una nave
                 </option>
 
                 {% for area in areas %}
@@ -277,4 +277,61 @@
         Regresar
     </a>
     
+    <script>
+        const naveSelect = document.getElementById("nave_id");
+        const areaSelect = document.getElementById("area_id");
+
+        naveSelect.addEventListener("change", async function() {
+            const naveId = this.value;
+
+                areaSelect.innerHTML = "";
+                areaSelect.disabled = true;
+
+                if (!naveId){
+
+                    const option = document.createElement("option");
+                    option.value = "";
+                    option.textContent = 
+                        "Selecciona primero la nave";
+                    areaSelect.appendChild(option);
+                    return;
+                }
+
+                const response = await fetch(
+                    `/bitacora/api/areas/${naveId}`
+                );
+
+                if(!response.ok){
+                    alert(
+                        "No fue posible cargar las áreas."
+                    );
+                    return;
+                }
+
+                const areas = await response.json();
+
+                const defaultOption =
+                    document.createElement("option");
+
+                defaultOption.value = "";
+
+                defaultOption.textContent = 
+                    "Seleccionar área";
+
+                areaSelect.appendChild(
+                    defaultOption
+                );
+
+                areas.forEach(area => {
+                    const option = 
+                        document.createElement("option");
+
+                    option.value = area.id;
+                    option.textContent = area.nombre;
+                    areaSelect.appendChild(option);
+                });
+
+                areaSelect.disabled = false;
+        });
+    </script>
 {% endblock %}

@@ -26,7 +26,80 @@
     Registrar entrada
 </a>
 
-<br>
+<h2>Personas dentro</h2>
+
+{% if registros_activos %}
+    <table border="1">
+        <thead>
+            <tr>
+                <th>No.</th>
+                <th>Fecha</th>
+                <th>Entrada</th>
+                <th>Personal</th>
+                <th>Empresa</th>
+                <th>Nave</th>
+                <th>Área</th>
+                <th>Código</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for registro in registros_activos %}
+                <tr>
+                    <td>
+                        {{ registro.numero }}
+                    </td>
+                    <td>
+                        {{ registro.fecha }}
+                    </td>
+                    <td>
+                        {{ registro.hora_entrada }}
+                    </td>
+                    <td>
+                        {{ registro.personal.nombre }}
+                    </td>
+                    <td>
+                        {{ registro.empresa.nombre }}
+                    </td>
+                    <td>
+                        {{ registro.nave.codigo }}
+                    </td>
+                    <td>
+                        {{ registro.area.nombre }}
+                    </td>
+                    <td>
+                        {{ registro.codigo_requerimiento }}
+                    </td>
+                    <td>
+                        <form 
+                            method="POST" 
+                            action="{{
+                                url_for(
+                                    'bitacora.salida',
+                                    registro_id = registro.id
+                                )
+                            }}"
+                        >
+                        <button type="submit">
+                            Registrar salida
+                        </button>
+
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+
+
+<p>
+    No hay personas actualmente dentro.
+</p>
+
+{% endif %}
+
 <br>
 
 <a href="{{ url_for('auth.logout') }}">
