@@ -1,0 +1,311 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Editar registro</h1>
+
+<p>
+    <strong>No. de registro:</strong>
+    {{ registro.numero }}
+</p>
+
+<hr>
+
+<form method="POST">
+
+    <div>
+        <label>Fecha:</label>
+
+        <input
+            type="date"
+            name="fecha"
+            value="{{ registro.fecha.strftime('%Y-%m-%d') }}"
+            required
+        >
+    </div>
+
+    <br>
+
+    <div>
+        <label>Hora de entrada:</label>
+
+        <input
+            type="time"
+            name="hora_entrada"
+            value="{{ registro.hora_entrada.strftime('%H:%M') }}"
+            required
+        >
+    </div>
+
+    <br>
+
+    <div>
+        <label>Hora de salida:</label>
+
+        <input
+            type="time"
+            name="hora_salida"
+            {% if registro.hora_salida %}
+                value="{{ registro.hora_salida.strftime('%H:%M') }}"
+            {% endif %}
+        >
+    </div>
+
+    <br>
+
+    <div>
+        <label>Soporte:</label>
+
+        <input
+            type="text"
+            name="soporte"
+            value="{{ registro.soporte }}"
+            required
+        >
+    </div>
+
+    <br>
+
+    <div>
+        <label>Empresa:</label>
+
+        <select name="empresa_id" required>
+
+            {% for empresa in empresas %}
+
+                <option
+                    value="{{ empresa.id }}"
+                    {% if empresa.id == registro.empresa_id %}
+                        selected
+                    {% endif %}
+                >
+                    {{ empresa.nombre }}
+                </option>
+
+            {% endfor %}
+
+        </select>
+    </div>
+
+    <br>
+
+    <div>
+        <label>Actividad:</label>
+
+        <textarea
+            name="actividad"
+            required
+        >{{ registro.actividad }}</textarea>
+    </div>
+
+    <br>
+
+    <div>
+        <label>Nave:</label>
+
+        <select name="nave_id" id="nave_id" required>
+
+            {% for nave in naves %}
+
+                <option
+                    value="{{ nave.id }}"
+                    {% if nave.id == registro.nave_id %}
+                        selected
+                    {% endif %}
+                >
+                    {{ nave.codigo }}
+                </option>
+
+            {% endfor %}
+
+        </select>
+    </div>
+
+    <br>
+
+    <div>
+        <label>Área:</label>
+
+        <select name="area_id" id="area_id" required>
+
+            {% for area in areas %}
+
+                <option
+                    value="{{ area.id }}"
+                    {% if area.id == registro.area_id %}
+                        selected
+                    {% endif %}
+                >
+                    {{ area.nombre }}
+                </option>
+
+            {% endfor %}
+
+        </select>
+    </div>
+
+    <br>
+
+    <div>
+        <label>Bitácora lectora:</label>
+
+        <input
+            type="text"
+            name="bitacora_lectora"
+            value="{{ registro.bitacora_lectora }}"
+            required
+        >
+    </div>
+
+    <br>
+
+    <div>
+        <label>Tipo de requerimiento:</label>
+
+        <select
+            name="tipo_requerimiento_id"
+            required
+        >
+
+            {% for tipo in tipos %}
+
+                <option
+                    value="{{ tipo.id }}"
+                    {% if tipo.id == registro.tipo_requerimiento_id %}
+                        selected
+                    {% endif %}
+                >
+                    {{ tipo.codigo }} - {{ tipo.nombre }}
+                </option>
+
+            {% endfor %}
+
+        </select>
+    </div>
+
+    <br>
+
+    <div>
+        <label>Código IR/RR/CR:</label>
+
+        <input
+            type="text"
+            name="codigo_requerimiento"
+            value="{{ registro.codigo_requerimiento }}"
+            required
+        >
+    </div>
+
+    <br>
+
+    <div>
+        <label>Argonite / Anexo 1:</label>
+
+        <select name="argonite_anexo1">
+
+            <option
+                value="0"
+                {% if not registro.argonite_anexo1 %}
+                    selected
+                {% endif %}
+            >
+                NO
+            </option>
+
+            <option
+                value="1"
+                {% if registro.argonite_anexo1 %}
+                    selected
+                {% endif %}
+            >
+                SI
+            </option>
+
+        </select>
+    </div>
+
+    <br>
+
+    <div>
+        <label>Personal:</label>
+
+        <select name="personal_id" required>
+
+            {% for persona in personal %}
+
+                <option
+                    value="{{ persona.id }}"
+                    {% if persona.id == registro.personal_id %}
+                        selected
+                    {% endif %}
+                >
+                    {{ persona.nombre }}
+                </option>
+
+            {% endfor %}
+
+        </select>
+    </div>
+
+    <br>
+
+    <div>
+        <label>Auditoría:</label>
+
+        <select name="auditor_id" required>
+
+            {% for auditor in auditores %}
+
+                <option
+                    value="{{ auditor.id }}"
+                    {% if auditor.id == registro.auditor_id %}
+                        selected
+                    {% endif %}
+                >
+                    {{ auditor.nombre }}
+                </option>
+
+            {% endfor %}
+
+        </select>
+    </div>
+
+    <br>
+
+    <div>
+        <label>Amonestación:</label>
+
+        <input
+            type="number"
+            name="amonestacion"
+            min="0"
+            value="{{ registro.amonestacion }}"
+        >
+    </div>
+
+    <br>
+
+    <div>
+        <label>Comentario:</label>
+
+        <textarea name="comentario">{{ registro.comentario or '' }}</textarea>
+    </div>
+
+    <br>
+
+    <button type="submit">
+        Guardar cambios
+    </button>
+
+    <a
+        href="{{ url_for(
+            'bitacora.detalle',
+            registro_id=registro.id
+        ) }}"
+    >
+        Cancelar
+    </a>
+
+</form>
+
+{% endblock %}

@@ -167,6 +167,7 @@ Consultar bitácora
             <th>Código</th>
             <th>Personal</th>
             <th>Auditoría</th>
+            <th>Acciones</th>
         </tr>
 
     </thead>
@@ -228,6 +229,12 @@ Consultar bitácora
 
             <td>
                 {{ registro.auditor.nombre }}
+            </td>
+
+            <td>
+                <a href="{{ url_for('bitacora.detalle', registro_id=registro.id) }}">
+                    Ver
+                </a>
             </td>
 
         </tr>

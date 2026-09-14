@@ -414,3 +414,204 @@ def consultar():
         personal=personal,
         auditores=auditores
     )
+
+@bitacora_bp.route("/detalle/<int:registro_id>")
+@login_required
+def detalle(registro_id):
+
+    registro = db.session.get(
+        RegistroBitacora,
+        registro_id
+    )
+
+    if registro is  None:
+        flash("El registro no existe.", "danger")
+        return redirect(url_for("bitacora.consultar"))
+
+    return render_template(
+        "bitacora/detalle.html",
+        registro=registro
+    )
+
+@bitacora_bp.route("/editar/<int:registro_id>", methods=["GET", "POST"])
+@login_required
+def editar(registro_id):
+
+    registro = db.session.get(
+        RegistroBitacora,
+        registro_id
+    )
+
+    if registro is None:
+        flash("El registro no existe.", "danger")
+        return redirect(url_for("bitacora.consultar"))
+
+    empresas = (
+        Empresa.query
+        .filter_by(activo=True)
+        .order_by(Empresa.nombre)
+        .all()
+    )
+
+    naves = (
+        Nave.query
+        .filter_by(activo=True)
+        .order_by(Nave.codigo)
+        .all()
+    )
+
+    areas = (
+        Area.query
+        .filter_by(activo=True)
+        .order_by(Area.nombre)
+        .all()
+    )
+
+    tipos = (
+        TipoRequerimiento.query
+        .filter_by(activo=True)
+        .order_by(TipoRequerimiento.nombre)
+        .all()
+    )
+
+    personal = (
+        Personal.query
+        .filter_by(activo=True)
+        .order_by(Personal.nombre)
+        .all()
+    )
+
+    auditores = (
+        Auditor.query
+        .filter_by(activo=True)
+        .order_by(Auditor.nombre)
+        .all()
+    )
+
+    if request.method == "POST":
+
+        try:
+            registro.fecha = datetime.strptime(
+                request.form["fecha"],
+                "%Y-%m-%d"
+            ).date()
+
+            registro.hora_entrada = datetime.strptime(
+                request.form["hora_entrada"],
+                "%H:%M"
+            ).time()
+
+            hora_salida = request.form.get("hora_salida", "").strip()
+
+            if hora_salida:
+                registro.hora_salida = datetime.strptime(
+                    hora_salida,
+                    "%H:%M"
+                ).time()
+            else:
+                registro.hora_salida = None
+
+            registro.soporte = request.form["soporte"].strip()
+
+            registro.empresa_id = int(
+                request.form["empresa_id"]
+            )
+
+            registro.actividad = request.form["actividad"].strip()
+
+            registro.nave_id = int(
+                request.form["nave_id"]
+            )
+
+            registro.area_id = int(
+                request.form["area_id"]
+            )
+
+            registro.bitacora_lectora = request.form[
+                "bitacora_lectora"
+            ].strip()
+
+            registro.tipo_requerimiento_id = int(
+                request.form["tipo_requerimiento_id"]
+            )
+
+            registro.codigo_requerimiento = request.form[
+                "codigo_requerimiento"
+            ].strip().upper()
+
+            registro.argonite_anexo1 = (
+                request.form.get("argonite_anexo1") == "1"
+            )
+
+            registro.personal_id = int(
+                request.form["personal_id"]
+            )
+
+            registro.auditor_id = int(
+                request.form["auditor_id"]
+            )
+
+            registro.amonestacion = int(
+                request.form.get("amonestacion", 0)
+            )
+
+            registro.comentario = (
+                request.form.get("comentario", "").strip()
+                or None
+            )
+
+            # Validar que el área pertenezca a la nave
+            area = db.session.get(
+                Area,
+                registro.area_id
+            )
+
+            if area is None or area.nave_id != registro.nave_id:
+                flash(
+                    "El área seleccionada no pertenece a la nave.",
+                    "danger"
+                )
+
+                return render_template(
+                    "bitacora/editar.html",
+                    registro=registro,
+                    empresas=empresas,
+                    naves=naves,
+                    areas=areas,
+                    tipos=tipos,
+                    personal=personal,
+                    auditores=auditores
+                )
+
+            db.session.commit()
+
+            flash(
+                "Registro actualizado correctamente.",
+                "success"
+            )
+
+            return redirect(
+                url_for(
+                    "bitacora.detalle",
+                    registro_id=registro.id
+                )
+            )
+
+        except (ValueError, KeyError):
+            db.session.rollback()
+
+            flash(
+                "Hay datos inválidos en el formulario.",
+                "danger"
+            )
+
+    return render_template(
+        "bitacora/editar.html",
+        registro=registro,
+        empresas=empresas,
+        naves=naves,
+        areas=areas,
+        tipos=tipos,
+        personal=personal,
+        auditores=auditores
+    )

@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Detalle del registro</h1>
+
+<hr>
+
+<h2>Información general</h2>
+
+<p>
+    <strong>No.:</strong>
+    {{ registro.numero }}
+</p>
+
+<p>
+    <strong>Fecha:</strong>
+    {{ registro.fecha }}
+</p>
+
+<p>
+    <strong>Hora de entrada:</strong>
+    {{ registro.hora_entrada }}
+</p>
+
+<p>
+    <strong>Hora de salida:</strong>
+
+    {% if registro.hora_salida %}
+        {{ registro.hora_salida }}
+    {% else %}
+        Dentro
+    {% endif %}
+</p>
+
+<p>
+    <strong>Soporte:</strong>
+    {{ registro.soporte }}
+</p>
+
+<p>
+    <strong>Empresa:</strong>
+    {{ registro.empresa.nombre }}
+</p>
+
+<p>
+    <strong>Actividad:</strong>
+    {{ registro.actividad }}
+</p>
+
+<hr>
+
+<h2>Ubicación</h2>
+
+<p>
+    <strong>Nave:</strong>
+    {{ registro.nave.codigo }}
+</p>
+
+<p>
+    <strong>Área:</strong>
+    {{ registro.area.nombre }}
+</p>
+
+<p>
+    <strong>Bitácora lectora:</strong>
+    {{ registro.bitacora_lectora }}
+</p>
+
+<hr>
+
+<h2>Requerimiento</h2>
+
+<p>
+    <strong>Tipo:</strong>
+    {{ registro.tipo_requerimiento.nombre }}
+</p>
+
+<p>
+    <strong>Código:</strong>
+    {{ registro.codigo_requerimiento }}
+</p>
+
+<p>
+    <strong>Argonite / Anexo 1:</strong>
+
+    {% if registro.argonite_anexo1 %}
+        SI
+    {% else %}
+        NO
+    {% endif %}
+</p>
+
+<hr>
+
+<h2>Personal</h2>
+
+<p>
+    <strong>Personal:</strong>
+    {{ registro.personal.nombre }}
+</p>
+
+<p>
+    <strong>No. Registro:</strong>
+    {{ registro.numero_registro }}
+</p>
+
+<hr>
+
+<h2>Auditoría</h2>
+
+<p>
+    <strong>Auditoría:</strong>
+    {{ registro.auditor.nombre }}
+</p>
+
+<p>
+    <strong>Amonestación:</strong>
+    {{ registro.amonestacion }}
+</p>
+
+<p>
+    <strong>Comentario:</strong>
+</p>
+
+<p>
+    {% if registro.comentario %}
+        {{ registro.comentario }}
+    {% else %}
+        Sin comentario
+    {% endif %}
+</p>
+
+<hr>
+
+<a href="{{ url_for('bitacora.consultar') }}">
+    ← Regresar a consulta
+</a>
+
+<a href="{{ url_for('bitacora.editar', registro_id=registro.id) }}">
+    Editar registro
+</a>
+
+{% endblock %}
