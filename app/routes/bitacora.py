@@ -1,7 +1,8 @@
+from sqlalchemy import or_
 from datetime import date, datetime
 from flask import (Blueprint, render_template, request, redirect, url_for, flash, jsonify)
 from flask_login import (login_required, current_user)
-from app.models import (Empresa, Nave, Area, Personal, Auditor)
+from app.models import (Empresa, Nave, Area, Personal, Auditor, RegistroBitacora, TipoRequerimiento)
 from app.services.bitacora_service import (crear_registro, registrar_salida)
 from app.extensions import db
 
@@ -265,4 +266,151 @@ def salida(registro_id):
 
     return redirect(
         url_for("bitacora.index")
+    )
+
+@bitacora_bp.route("/consultar")
+@login_required
+def consultar():
+
+    query = RegistroBitacora.query
+
+    fecha_inicio = request.args.get("fecha_inicio", "").strip()
+    fecha_fin = request.args.get("fecha_fin", "").strip()
+
+    empresa_id = request.args.get("empresa_id", "").strip()
+    nave_id = request.args.get("nave_id", "").strip()
+    area_id = request.args.get("area_id", "").strip()
+    tipo_id = request.args.get("tipo_id", "").strip()
+    personal_id = request.args.get("personal_id", "").strip()
+    auditor_id = request.args.get("auditor_id", "").strip()
+
+    codigo = request.args.get("codigo", "").strip().upper()
+
+    if fecha_inicio:
+        fecha = datetime.strptime(
+            fecha_inicio,
+            "%Y-%m-%d"
+        ).date()
+
+        query = query.filter(
+            RegistroBitacora.fecha >= fecha
+        )
+
+    if fecha_fin:
+        fecha = datetime.strptime(
+            fecha_fin,
+            "%Y-%m-%d"
+        ).date()
+
+        query = query=filter(
+            RegistroBitacora.fecha <= fecha
+        )
+
+    if empresa_id:
+        query = query.filter(
+            RegistroBitacora.empresa_id == int(empresa_id)
+        )
+
+    if nave_id:
+        query = query.filter(
+            RegistroBitacora.nave_id == int(nave_id)
+        )
+
+    if area_id:
+        query = query.filter(
+            RegistroBitacora.area_id == int(area_id)
+        )
+
+    if tipo_id:
+        query = query.filter(
+            RegistroBitacora.tipo_id == int(tipo_id)
+        )
+
+    if personal_id:
+        query = query.filter(
+            RegistroBitacora.personal_id == int(personal_id)
+        )
+
+    if auditor_id:
+        query = query.filter(
+            RegistroBitacora.auditor_id == int(auditor_id)
+        )
+
+    if codigo:
+        query = query.filter(
+            RegistroBitacora.codigo_requerimiento.ilike(
+                f"%{codigo}"
+            )
+        )
+
+    pagina = request.args.get("pagina", 1, type=int)
+
+    if pagina < 1:
+        pagina = 1
+
+    paginacion = (
+        query
+        .order_by(
+            RegistroBitacora.fecha.desc(),
+            RegistroBitacora.numero.desc()
+        )
+        .paginate(
+            page=pagina,
+            per_page=50,
+            error_out=False
+        )
+    )
+
+    empresas = (
+        Empresa.query
+        .filter_by(activo=True)
+        .order_by(Empresa.nombre)
+        .all()
+    )
+
+    naves = (
+        Nave.query
+        .filter_by(activo=True)
+        .order_by(Nave.codigo)
+        .all()
+    )
+
+    areas = (
+        Area.query
+        .filter_by(activo=True)
+        .order_by(Area.nombre)
+        .all()
+    )
+
+    tipos = (
+        TipoRequerimiento.query
+        .filter_by(activo=True)
+        .order_by(TipoRequerimiento.nombre)
+        .all()
+    )
+
+    personal = (
+        Personal.query
+        .filter_by(activo=True)
+        .order_by(Personal.nombre)
+        .all()
+    )
+
+    auditores = (
+        Auditor.query
+        .filter_by(activo=True)
+        .order_by(Auditor.nombre)
+        .all()
+    )
+
+    return render_template(
+        "bitacora/consultar.html",
+        paginacion=paginacion,
+        registros=paginacion.items,
+        empresas=empresas,
+        naves=naves,
+        areas=areas,
+        tipos=tipos,
+        personal=personal,
+        auditores=auditores
     )

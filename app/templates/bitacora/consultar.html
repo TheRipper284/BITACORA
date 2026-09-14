@@ -1,0 +1,306 @@
+{% extends "base.html" %}
+
+{% block title %}
+Consultar bitácora
+{% endblock %}
+
+
+{% block content %}
+
+<h1>Consultar bitácora</h1>
+
+<a href="{{ url_for('bitacora.registrar') }}">
+    Registrar entrada
+</a>
+
+<br>
+<br>
+
+<form method="GET">
+    <div>
+        <label>
+            Fecha inicial
+        </label>
+        <input 
+            type="date"
+            name="fecha_inicio"
+            value="{{ request.args.get('fecha_inicio', '') }}"
+        >
+    </div>
+
+    <br>
+
+    <div>
+        <label>
+            Fecha fin
+        </label>
+        <input 
+            type="date" 
+            name="fecha_fin" 
+            value="{{ request.args.get('fecha_fin', '') }}"
+        >
+
+        <br>
+
+        <div>
+            <label>
+                Empresa
+            </label>
+            <select name="empresa_id">
+                <option value="">
+                    Todas
+                </option>
+
+                {% for empresa in empresas %}
+                    <option 
+                        value="{{ empresa.id }}"
+                        {% if request.args.get('empresa_id')|int == empresa.id %}
+                            Selected
+                        {% endif %}
+                    >
+                        {{ empresa.nombre }}
+                    </option>
+                {% endfor %}
+
+            </select>
+        </div>
+
+        <br>
+
+        <div>
+            <label>
+                Nave
+            </label>
+            <select name="nave_id">
+                <option value="">
+                    Todas
+                </option>
+
+                {% for nave in naves %}
+                    <option 
+                        value="{{ nave.id }}"
+                        {% if request.args.get('nave_id')|int == nave.id %}
+                            Selected
+                        {% endif %}
+                    >
+                        {{ nave.codigo }}
+                    </option>
+                {% endfor %}
+
+            </select>
+        </div>
+
+        <br>
+
+        <div>
+            <label>
+                Área
+            </label>
+            <select name="area_id">
+                <option value="">
+                    Todas
+                </option>
+
+                {% for area in areas %}
+                    <option 
+                        value="{{ area.id }}"
+                        {% if request.args.get('area_id')|int == area.id %}
+                            Selected
+                        {% endif %}
+                    >
+                        {{ area.nombre }}
+                    </option>
+                {% endfor %}
+
+            </select>
+        </div>
+
+        <br>
+
+        <div>
+            <label>
+                Código IR / RR / CR
+            </label>
+            <input 
+                type="text"
+                name="codigo"
+                placeholder="Ej. CR21308038"
+                value="{{ request.args.get('codigo', '') }}"
+            >
+        </div>
+
+        <br>
+
+        <button type="submit">
+            Buscar🔎
+        </button>
+
+        <a href="{{  url_for('bitacora.consultar')  }}">
+            Limpiar🧹
+        </a>
+    </div>
+</form>
+
+<hr>
+
+<h2>Resultados</h2>
+
+<p>
+    Registros encontrados:
+    <strong>{{ paginacion.total }}</strong>
+</p>
+
+<table border="1">
+
+    <thead>
+
+        <tr>
+            <th>No.</th>
+            <th>Fecha</th>
+            <th>Entrada</th>
+            <th>Salida</th>
+            <th>Empresa</th>
+            <th>Actividad</th>
+            <th>Nave</th>
+            <th>Área</th>
+            <th>Tipo</th>
+            <th>Código</th>
+            <th>Personal</th>
+            <th>Auditoría</th>
+        </tr>
+
+    </thead>
+
+
+    <tbody>
+
+        {% for registro in registros %}
+
+        <tr>
+
+            <td>
+                {{ registro.numero }}
+            </td>
+
+            <td>
+                {{ registro.fecha }}
+            </td>
+
+            <td>
+                {{ registro.hora_entrada }}
+            </td>
+
+            <td>
+                {% if registro.hora_salida %}
+                    {{ registro.hora_salida }}
+                {% else %}
+                    Dentro
+                {% endif %}
+            </td>
+
+            <td>
+                {{ registro.empresa.nombre }}
+            </td>
+
+            <td>
+                {{ registro.actividad }}
+            </td>
+
+            <td>
+                {{ registro.nave.codigo }}
+            </td>
+
+            <td>
+                {{ registro.area.nombre }}
+            </td>
+
+            <td>
+                {{ registro.tipo_requerimiento.nombre }}
+            </td>
+
+            <td>
+                {{ registro.codigo_requerimiento }}
+            </td>
+
+            <td>
+                {{ registro.personal.nombre }}
+            </td>
+
+            <td>
+                {{ registro.auditor.nombre }}
+            </td>
+
+        </tr>
+
+        {% else %}
+
+        <tr>
+
+            <td colspan="12">
+                No se encontraron registros.
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+
+</table>
+
+<hr>
+
+<div>
+    {% if paginacion.has_prev %}
+        <a href="{{ url_for(
+            'bitacora.consultar',
+            pagina=paginacion.prev_num,
+            fecha_inicio=request.args.get('fecha_inicio'),
+            fecha_fin=request.args.get('fecha_fin'),
+            empresa_id=request.args.get('empresa_id'),
+            nave_id=request.args.get('nave_id'),
+            area_id=request.args.get('area_id'),
+            tipo_id=request.args.get('tipo_id'),
+            codigo=request.args.get('codigo'),
+            personal_id=request.args.get('personal_id'),
+            auditor_id=request.args.get('auditor_id')
+        ) }}">
+            ⬅️ Anterior
+        </a>
+    {% endif %}
+
+    <span>
+        Página {{ paginacion.page }}
+        de {{ paginacion.pages }}
+    </span>
+
+    {% if paginacion.has_next %}
+
+        <a href="{{ url_for(
+            'bitacora.consultar',
+            pagina=paginacion.next_num,
+            fecha_inicio=request.args.get('fecha_inicio'),
+            fecha_fin=request.args.get('fecha_fin'),
+            empresa_id=request.args.get('empresa_id'),
+            nave_id=request.args.get('nave_id'),
+            area_id=request.args.get('area_id'),
+            tipo_id=request.args.get('tipo_id'),
+            codigo=request.args.get('codigo'),
+            personal_id=request.args.get('personal_id'),
+            auditor_id=request.args.get('auditor_id')
+        ) }}">
+            Siguiente ➡️
+        </a>
+
+    {% endif %}
+
+</div>
+
+<br>
+
+
+<a href="{{ url_for('bitacora.index') }}">
+    Regresar
+</a>
+
+{% endblock %}
