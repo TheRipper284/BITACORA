@@ -5,6 +5,7 @@ from flask_login import (login_required, current_user)
 from app.models import (Empresa, Nave, Area, Personal, Auditor, RegistroBitacora, TipoRequerimiento)
 from app.services.bitacora_service import (crear_registro, registrar_salida)
 from app.extensions import db
+import re
 
 bitacora_bp = Blueprint(
     "bitacora",
@@ -491,97 +492,141 @@ def editar(registro_id):
     if request.method == "POST":
 
         try:
-            registro.fecha = datetime.strptime(
+
+            fecha = datetime.strptime(
                 request.form["fecha"],
                 "%Y-%m-%d"
             ).date()
 
-            registro.hora_entrada = datetime.strptime(
+            hora_entrada = datetime.strptime(
                 request.form["hora_entrada"],
                 "%H:%M"
             ).time()
 
-            hora_salida = request.form.get("hora_salida", "").strip()
+            hora_salida = None
 
-            if hora_salida:
-                registro.hora_salida = datetime.strptime(
-                    hora_salida,
+            if request.form.get("hora_salida"):
+                hora_salida = datetime.strptime(
+                    request.form["hora_salida"],
                     "%H:%M"
                 ).time()
-            else:
-                registro.hora_salida = None
 
-            registro.soporte = request.form["soporte"].strip()
-
-            registro.empresa_id = int(
+            empresa_id = int(
                 request.form["empresa_id"]
             )
 
-            registro.actividad = request.form["actividad"].strip()
-
-            registro.nave_id = int(
+            nave_id = int(
                 request.form["nave_id"]
             )
 
-            registro.area_id = int(
+            area_id = int(
                 request.form["area_id"]
             )
 
-            registro.bitacora_lectora = request.form[
-                "bitacora_lectora"
-            ].strip()
-
-            registro.tipo_requerimiento_id = int(
-                request.form["tipo_requerimiento_id"]
+            tipo_id = int(
+                request.form["tipo_id"]
             )
 
-            registro.codigo_requerimiento = request.form[
-                "codigo_requerimiento"
-            ].strip().upper()
-
-            registro.argonite_anexo1 = (
-                request.form.get("argonite_anexo1") == "1"
-            )
-
-            registro.personal_id = int(
+            personal_id = int(
                 request.form["personal_id"]
             )
 
-            registro.auditor_id = int(
+            auditor_id = int(
                 request.form["auditor_id"]
             )
 
+            area = db.session.get(
+                Area,
+                area_id
+            )
+
+            if area is None:
+                raise ValueError(
+                    "El área seleccionada no existe."
+                )
+
+            if area.nave_id != nave_id:
+                raise ValueError(
+                    "El área no pertenece a la nave seleccionada."
+                )
+
+            codigo = (
+                request.form["codigo_requerimiento"]
+                .strip()
+                .upper()
+            )
+
+            
+            if not re.fullmatch(r"(CR|RR|IR)\d+", codigo):
+                raise ValueError(
+                    "El código debe tener formato CR/RR/IR seguido de números. "
+                )
+
+            tipo_codigo = codigo [:2]
+            
+            tipo = db.session.get(
+                TipoRequerimiento,
+                tipo_id
+            )
+
+            if tipo is None:
+                raise ValueError(
+                    "El tipo de requerimiento no existe."
+                )
+
+            if tipo.codigo.upper() != tipo_codigo:
+                raise ValueError(
+                    "El tipo de requerimiento no corresponde al código."
+                )
+
+            registro.fecha = fecha
+            registro.hora_entrada = hora_entrada
+            registro.hora_salida = hora_salida
+
+            registro.soporte = (
+                request.form["soporte"]
+                .strip()
+            )
+
+            registro.empresa_id = empresa_id
+
+            registro.actividad = (
+                request.form["actividad"]
+                .strip()
+            )
+
+            registro.nave_id = nave_id
+            registro.area_id = area_id
+
+            registro.bitacora_lectora = (
+                request.form["bitacora_lectora"]
+                .strip()
+            )
+
+            registro.tipo_requerimiento_id = tipo_id
+
+            registro.codigo_requerimiento = codigo
+
+            registro.argonite_anexo1 = (
+                request.form.get("argonite_anexo1") == "SI"
+            )
+
+            registro.personal_id = personal_id
+
+            registro.numero_registro = int(
+                request.form["numero_registro"]
+            )
+
+            registro.auditor_id = auditor_id
+
             registro.amonestacion = int(
-                request.form.get("amonestacion", 0)
+                request.form["amonestacion"]
             )
 
             registro.comentario = (
-                request.form.get("comentario", "").strip()
-                or None
+                request.form.get("comentario", "")
+                .strip()
             )
-
-            # Validar que el área pertenezca a la nave
-            area = db.session.get(
-                Area,
-                registro.area_id
-            )
-
-            if area is None or area.nave_id != registro.nave_id:
-                flash(
-                    "El área seleccionada no pertenece a la nave.",
-                    "danger"
-                )
-
-                return render_template(
-                    "bitacora/editar.html",
-                    registro=registro,
-                    empresas=empresas,
-                    naves=naves,
-                    areas=areas,
-                    tipos=tipos,
-                    personal=personal,
-                    auditores=auditores
-                )
 
             db.session.commit()
 
@@ -597,11 +642,12 @@ def editar(registro_id):
                 )
             )
 
-        except (ValueError, KeyError):
+        except (ValueError, KeyError) as error:
+
             db.session.rollback()
 
             flash(
-                "Hay datos inválidos en el formulario.",
+                f"No se pudo actualizar el registro: {error}",
                 "danger"
             )
 
