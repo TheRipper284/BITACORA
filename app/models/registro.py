@@ -79,9 +79,9 @@ class RegistroBitacora(db.Model):
         default=False
     )
 
-    personal_id = db.Column(
-        db.Integer,
-        db.ForeignKey("personal.id"),
+    # PERSONAL COMO TEXTO
+    personal = db.Column(
+        db.String(150),
         nullable=False
     )
 
@@ -121,10 +121,6 @@ class RegistroBitacora(db.Model):
         onupdate=db.func.now()
     )
 
-    # ========================================================
-    # RELACIONES
-    # ========================================================
-
     nave = db.relationship(
         "Nave",
         back_populates="registros"
@@ -140,19 +136,10 @@ class RegistroBitacora(db.Model):
         back_populates="registros"
     )
 
-    personal = db.relationship(
-        "Personal",
-        back_populates="registros"
-    )
-
     auditor = db.relationship(
         "Auditor",
         back_populates="registros"
     )
-
-    # ========================================================
-    # INDICES
-    # ========================================================
 
     __table_args__ = (
         db.Index(
@@ -172,7 +159,7 @@ class RegistroBitacora(db.Model):
 
         db.Index(
             "ix_registro_personal",
-            "personal_id"
+            "personal"
         ),
 
         db.Index(

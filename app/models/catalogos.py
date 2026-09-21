@@ -1,7 +1,7 @@
 from app.extensions import db
 
-class TipoPersonal(db.Model):
 
+class TipoPersonal(db.Model):
     __tablename__ = "tipos_personal"
 
     id = db.Column(
@@ -10,7 +10,7 @@ class TipoPersonal(db.Model):
     )
 
     nombre = db.Column(
-        db.String(30),
+        db.String(50),
         nullable=False,
         unique=True
     )
@@ -26,8 +26,8 @@ class TipoPersonal(db.Model):
         back_populates="tipo_personal"
     )
 
-class TipoRequerimiento(db.Model):
 
+class TipoRequerimiento(db.Model):
     __tablename__ = "tipos_requerimiento"
 
     id = db.Column(
@@ -42,8 +42,8 @@ class TipoRequerimiento(db.Model):
     )
 
     nombre = db.Column(
-        db.String(30),
-        nullable=False,
+        db.String(100),
+        nullable=False
     )
 
     activo = db.Column(

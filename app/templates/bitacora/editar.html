@@ -235,29 +235,17 @@
 
     <br>
 
-    <div>
-        <label>Personal:</label>
+        <div>
+            <label>Personal:</label>
 
-        <select
-            name="personal_id"
-            required
-        >
-
-            {% for persona in personal %}
-
-                <option
-                    value="{{ persona.id }}"
-                    {% if persona.id == registro.personal_id %}
-                        selected
-                    {% endif %}
-                >
-                    {{ persona.nombre }}
-                </option>
-
-            {% endfor %}
-
-        </select>
-    </div>
+            <input
+                type="text"
+                name="personal"
+                value="{{ registro.personal }}"
+                maxlength="150"
+                required
+            >
+        </div>
 
     <br>
 

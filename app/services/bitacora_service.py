@@ -1,4 +1,5 @@
 from datetime import datetime
+
 import re
 
 from app.extensions import db
@@ -8,7 +9,6 @@ from app.models import (
     TipoRequerimiento,
     Area,
     Nave,
-    Personal,
     Auditor
 )
 
@@ -18,9 +18,12 @@ from app.models import (
 # ============================================================
 
 def obtener_siguiente_numero(fecha):
+
     ultimo = (
         RegistroBitacora.query
-        .filter_by(fecha=fecha)
+        .filter_by(
+            fecha=fecha
+        )
         .order_by(
             RegistroBitacora.numero.desc()
         )
@@ -38,6 +41,7 @@ def obtener_siguiente_numero(fecha):
 # ============================================================
 
 def obtener_tipo_requerimiento(codigo):
+
     codigo = codigo.strip().upper()
 
     if not re.fullmatch(
@@ -74,6 +78,7 @@ def obtener_tipo_requerimiento(codigo):
 # ============================================================
 
 def validar_area(area_id, nave_id):
+
     area = (
         Area.query
         .filter_by(
@@ -99,9 +104,9 @@ def validar_area(area_id, nave_id):
 
 def validar_catalogos(
     nave_id,
-    personal_id,
     auditor_id
 ):
+
     nave = db.session.get(
         Nave,
         nave_id
@@ -111,17 +116,6 @@ def validar_catalogos(
         raise ValueError(
             "La nave seleccionada no existe "
             "o está inactiva."
-        )
-
-    personal = db.session.get(
-        Personal,
-        personal_id
-    )
-
-    if not personal or not personal.activo:
-        raise ValueError(
-            "El personal seleccionado no existe "
-            "o está inactivo."
         )
 
     auditor = db.session.get(
@@ -135,7 +129,7 @@ def validar_catalogos(
             "o está inactivo."
         )
 
-    return nave, personal, auditor
+    return nave, auditor
 
 
 # ============================================================
@@ -153,7 +147,7 @@ def crear_registro(
     bitacora_lectora,
     codigo_requerimiento,
     argonite_anexo1,
-    personal_id,
+    personal,
     auditor_id,
     amonestacion,
     comentario
@@ -177,6 +171,23 @@ def crear_registro(
         )
 
     # --------------------------------------------------------
+    # VALIDAR PERSONAL
+    # --------------------------------------------------------
+
+    personal = personal.strip()
+
+    if not personal:
+        raise ValueError(
+            "El personal es obligatorio."
+        )
+
+    if len(personal) > 150:
+        raise ValueError(
+            "El personal no puede superar "
+            "los 150 caracteres."
+        )
+
+    # --------------------------------------------------------
     # VALIDAR TIPO Y CODIGO
     # --------------------------------------------------------
 
@@ -196,7 +207,6 @@ def crear_registro(
 
     validar_catalogos(
         nave_id=nave_id,
-        personal_id=personal_id,
         auditor_id=auditor_id
     )
 
@@ -222,31 +232,55 @@ def crear_registro(
     # --------------------------------------------------------
 
     registro = RegistroBitacora(
+
         numero=numero,
+
         fecha=fecha,
+
         hora_entrada=hora_entrada,
+
         soporte=soporte,
+
         empresa=empresa,
+
         actividad=actividad,
+
         nave_id=nave_id,
+
         area_id=area_id,
+
         bitacora_lectora=bitacora_lectora,
+
         tipo_requerimiento_id=tipo_requerimiento.id,
+
         codigo_requerimiento=codigo_requerimiento,
+
         argonite_anexo1=argonite_anexo1,
-        personal_id=personal_id,
+
+        personal=personal,
+
         numero_registro=1,
+
         auditor_id=auditor_id,
+
         amonestacion=amonestacion,
+
         comentario=comentario
+
     )
 
     try:
-        db.session.add(registro)
+
+        db.session.add(
+            registro
+        )
+
         db.session.commit()
 
     except Exception:
+
         db.session.rollback()
+
         raise
 
     return registro
@@ -259,6 +293,7 @@ def crear_registro(
 def registrar_salida(registro):
 
     if registro.hora_salida is not None:
+
         raise ValueError(
             "Este registro ya tiene hora de salida."
         )
@@ -268,10 +303,13 @@ def registrar_salida(registro):
     registro.hora_salida = ahora.time()
 
     try:
+
         db.session.commit()
 
     except Exception:
+
         db.session.rollback()
+
         raise
 
     return registro

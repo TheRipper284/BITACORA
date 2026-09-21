@@ -219,30 +219,16 @@
 
     <h2>Personal</h2>
 
-    <div>
-        <label for="personal_id">
-            Personal
-        </label>
+        <div>
+            <label>Personal:</label>
 
-        <select
-            id="personal_id"
-            name="personal_id"
-            required
-        >
-            <option value="">
-                Seleccionar personal
-            </option>
-
-            {% for persona in personal %}
-
-                <option value="{{ persona.id }}">
-                    {{ persona.nombre }}
-                </option>
-
-            {% endfor %}
-
-        </select>
-    </div>
+            <input
+                type="text"
+                name="personal"
+                maxlength="150"
+                required
+            >
+        </div>
 
     <br>
 

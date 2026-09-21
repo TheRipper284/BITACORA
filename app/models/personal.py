@@ -1,8 +1,8 @@
 from app.extensions import db
 
-class Personal(db.Model):
 
-    __tablename__ = 'personal'
+class Personal(db.Model):
+    __tablename__ = "personal"
 
     id = db.Column(
         db.Integer,
@@ -16,14 +16,14 @@ class Personal(db.Model):
 
     tipo_personal_id = db.Column(
         db.Integer,
-        db.ForeignKey('tipos_personal.id'),
+        db.ForeignKey("tipos_personal.id"),
         nullable=False
     )
 
     numero_registro = db.Column(
         db.Integer,
         nullable=False,
-        default=True
+        default=1
     )
 
     activo = db.Column(
@@ -34,10 +34,5 @@ class Personal(db.Model):
 
     tipo_personal = db.relationship(
         "TipoPersonal",
-        back_populates="personal"
-    )
-
-    registros = db.relationship(
-        "RegistroBitacora",
         back_populates="personal"
     )

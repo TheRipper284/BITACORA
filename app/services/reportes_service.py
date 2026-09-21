@@ -99,9 +99,9 @@ def generar_reporte_mensual(mes, año):
             registro.tipo_requerimiento.nombre,
             registro.codigo_requerimiento,
             "SI" if registro.argonite_anexo1 else "NO",
-            registro.personal.tipo_personal.nombre,
+            "",
             registro.numero_registro,
-            registro.personal.nombre,
+            registro.personal,
             registro.auditor.nombre,
             registro.amonestacion,
             registro.comentario or ""
