@@ -1,11 +1,41 @@
 from sqlalchemy import or_
+
 from datetime import date, datetime
-from flask import (Blueprint, render_template, request, redirect, url_for, flash, jsonify)
-from flask_login import (login_required, current_user)
-from app.models import (Empresa, Nave, Area, Personal, Auditor, RegistroBitacora, TipoRequerimiento)
-from app.services.bitacora_service import (crear_registro, registrar_salida)
+
+from flask import (
+    Blueprint,
+    render_template,
+    request,
+    redirect,
+    url_for,
+    flash,
+    jsonify
+)
+
+from flask_login import (
+    login_required,
+    current_user
+)
+
+from app.models import (
+    Empresa,
+    Nave,
+    Area,
+    Personal,
+    Auditor,
+    RegistroBitacora,
+    TipoRequerimiento
+)
+
+from app.services.bitacora_service import (
+    crear_registro,
+    registrar_salida
+)
+
 from app.extensions import db
+
 import re
+
 
 bitacora_bp = Blueprint(
     "bitacora",
@@ -13,9 +43,15 @@ bitacora_bp = Blueprint(
     url_prefix="/bitacora"
 )
 
+
+# ============================================================
+# INICIO
+# ============================================================
+
 @bitacora_bp.route("/")
 @login_required
 def index():
+
     from app.models import RegistroBitacora
 
     registros_activos = (
@@ -32,13 +68,18 @@ def index():
 
     return render_template(
         "bitacora/index.html",
-        usuario = current_user,
-        registros_activos = registros_activos
+        usuario=current_user,
+        registros_activos=registros_activos
     )
+
+
+# ============================================================
+# REGISTRAR
+# ============================================================
 
 @bitacora_bp.route(
     "/registrar",
-    methods = ["GET", "POST"]
+    methods=["GET", "POST"]
 )
 @login_required
 def registrar():
@@ -126,43 +167,30 @@ def registrar():
             )
 
             registro = crear_registro(
-                fecha = fecha,
-
-                hora_entrada = hora_entrada,
-
-                soporte = request.form[
+                fecha=fecha,
+                hora_entrada=hora_entrada,
+                soporte=request.form[
                     "soporte"
                 ].strip(),
-
-                empresa_id = empresa_id,
-
-                actividad = request.form[
+                empresa_id=empresa_id,
+                actividad=request.form[
                     "actividad"
                 ].strip(),
-
-                nave_id = nave_id,
-
-                area_id = area_id,
-
-                bitacora_lectora = request.form[
+                nave_id=nave_id,
+                area_id=area_id,
+                bitacora_lectora=request.form[
                     "bitacora_lectora"
                 ].strip(),
-
-                codigo_requerimiento = (
+                codigo_requerimiento=(
                     request.form[
                         "codigo_requerimiento"
                     ]
                 ),
-
-                argonite_anexo1 = argonite,
-
-                personal_id = personal_id,
-
-                auditor_id = auditor_id,
-
-                amonestacion = amonestacion,
-
-                comentario = request.form.get(
+                argonite_anexo1=argonite,
+                personal_id=personal_id,
+                auditor_id=auditor_id,
+                amonestacion=amonestacion,
+                comentario=request.form.get(
                     "comentario",
                     ""
                 ).strip()
@@ -171,7 +199,7 @@ def registrar():
             flash(
                 f"Registro {registro.numero} "
                 "creado correctamente.",
-                "succes"
+                "success"
             )
 
             return redirect(
@@ -188,6 +216,7 @@ def registrar():
             )
 
         except Exception as error:
+
             print("ERROR AL CREAR REGISTRO:")
             print(type(error).__name__)
             print(error)
@@ -195,20 +224,28 @@ def registrar():
             flash(
                 f"No fue posible crear tu registro: {error}",
                 "error"
-        )
+            )
 
     return render_template(
         "bitacora/registrar.html",
-        empresas = empresas,
-        naves = naves,
-        areas = areas,
-        personal = personal,
-        auditores = auditores
+        empresas=empresas,
+        naves=naves,
+        areas=areas,
+        personal=personal,
+        auditores=auditores
     )
 
-@bitacora_bp.route("/api/areas/<int:nave_id>")
+
+# ============================================================
+# API - AREAS POR NAVE
+# ============================================================
+
+@bitacora_bp.route(
+    "/api/areas/<int:nave_id>"
+)
 @login_required
 def obtener_areas(nave_id):
+
     areas = (
         Area.query
         .filter_by(
@@ -226,6 +263,11 @@ def obtener_areas(nave_id):
         }
         for area in areas
     ])
+
+
+# ============================================================
+# REGISTRAR SALIDA
+# ============================================================
 
 @bitacora_bp.route(
     "/salida/<int:registro_id>",
@@ -253,13 +295,16 @@ def salida(registro_id):
         )
 
     try:
+
         registrar_salida(registro)
+
         flash(
             "Hora de salida registrada correctamente.",
-            "succes"
+            "success"
         )
 
     except ValueError as error:
+
         flash(
             str(error),
             "error"
@@ -269,25 +314,68 @@ def salida(registro_id):
         url_for("bitacora.index")
     )
 
+
+# ============================================================
+# CONSULTAR
+# ============================================================
+
 @bitacora_bp.route("/consultar")
 @login_required
 def consultar():
 
     query = RegistroBitacora.query
 
-    fecha_inicio = request.args.get("fecha_inicio", "").strip()
-    fecha_fin = request.args.get("fecha_fin", "").strip()
+    fecha_inicio = request.args.get(
+        "fecha_inicio",
+        ""
+    ).strip()
 
-    empresa_id = request.args.get("empresa_id", "").strip()
-    nave_id = request.args.get("nave_id", "").strip()
-    area_id = request.args.get("area_id", "").strip()
-    tipo_id = request.args.get("tipo_id", "").strip()
-    personal_id = request.args.get("personal_id", "").strip()
-    auditor_id = request.args.get("auditor_id", "").strip()
+    fecha_fin = request.args.get(
+        "fecha_fin",
+        ""
+    ).strip()
 
-    codigo = request.args.get("codigo", "").strip().upper()
+    empresa_id = request.args.get(
+        "empresa_id",
+        ""
+    ).strip()
+
+    nave_id = request.args.get(
+        "nave_id",
+        ""
+    ).strip()
+
+    area_id = request.args.get(
+        "area_id",
+        ""
+    ).strip()
+
+    tipo_id = request.args.get(
+        "tipo_id",
+        ""
+    ).strip()
+
+    personal_id = request.args.get(
+        "personal_id",
+        ""
+    ).strip()
+
+    auditor_id = request.args.get(
+        "auditor_id",
+        ""
+    ).strip()
+
+    codigo = request.args.get(
+        "codigo",
+        ""
+    ).strip().upper()
+
+    # --------------------------------------------------------
+    # FECHA INICIO
+    # --------------------------------------------------------
 
     if fecha_inicio:
+
         fecha = datetime.strptime(
             fecha_inicio,
             "%Y-%m-%d"
@@ -297,54 +385,114 @@ def consultar():
             RegistroBitacora.fecha >= fecha
         )
 
+    # --------------------------------------------------------
+    # FECHA FIN
+    # --------------------------------------------------------
+
     if fecha_fin:
+
         fecha = datetime.strptime(
             fecha_fin,
             "%Y-%m-%d"
         ).date()
 
-        query = query=filter(
+        query = query.filter(
             RegistroBitacora.fecha <= fecha
         )
 
+    # --------------------------------------------------------
+    # EMPRESA
+    # --------------------------------------------------------
+
     if empresa_id:
-        query = query.filter(
-            RegistroBitacora.empresa_id == int(empresa_id)
-        )
 
-    if nave_id:
         query = query.filter(
-            RegistroBitacora.nave_id == int(nave_id)
-        )
-
-    if area_id:
-        query = query.filter(
-            RegistroBitacora.area_id == int(area_id)
-        )
-
-    if tipo_id:
-        query = query.filter(
-            RegistroBitacora.tipo_id == int(tipo_id)
-        )
-
-    if personal_id:
-        query = query.filter(
-            RegistroBitacora.personal_id == int(personal_id)
-        )
-
-    if auditor_id:
-        query = query.filter(
-            RegistroBitacora.auditor_id == int(auditor_id)
-        )
-
-    if codigo:
-        query = query.filter(
-            RegistroBitacora.codigo_requerimiento.ilike(
-                f"%{codigo}"
+            RegistroBitacora.empresa_id == int(
+                empresa_id
             )
         )
 
-    pagina = request.args.get("pagina", 1, type=int)
+    # --------------------------------------------------------
+    # NAVE
+    # --------------------------------------------------------
+
+    if nave_id:
+
+        query = query.filter(
+            RegistroBitacora.nave_id == int(
+                nave_id
+            )
+        )
+
+    # --------------------------------------------------------
+    # AREA
+    # --------------------------------------------------------
+
+    if area_id:
+
+        query = query.filter(
+            RegistroBitacora.area_id == int(
+                area_id
+            )
+        )
+
+    # --------------------------------------------------------
+    # TIPO DE REQUERIMIENTO
+    # --------------------------------------------------------
+
+    if tipo_id:
+
+        query = query.filter(
+            RegistroBitacora.tipo_requerimiento_id == int(
+                tipo_id
+            )
+        )
+
+    # --------------------------------------------------------
+    # PERSONAL
+    # --------------------------------------------------------
+
+    if personal_id:
+
+        query = query.filter(
+            RegistroBitacora.personal_id == int(
+                personal_id
+            )
+        )
+
+    # --------------------------------------------------------
+    # AUDITOR
+    # --------------------------------------------------------
+
+    if auditor_id:
+
+        query = query.filter(
+            RegistroBitacora.auditor_id == int(
+                auditor_id
+            )
+        )
+
+    # --------------------------------------------------------
+    # CODIGO
+    # --------------------------------------------------------
+
+    if codigo:
+
+        query = query.filter(
+            RegistroBitacora.codigo_requerimiento.ilike(
+                f"%{codigo}%"
+            )
+        )
+
+    # --------------------------------------------------------
+    # PAGINACION
+    # --------------------------------------------------------
+
+    pagina = request.args.get(
+        "pagina",
+        1,
+        type=int
+    )
 
     if pagina < 1:
         pagina = 1
@@ -361,6 +509,10 @@ def consultar():
             error_out=False
         )
     )
+
+    # --------------------------------------------------------
+    # CATALOGOS
+    # --------------------------------------------------------
 
     empresas = (
         Empresa.query
@@ -416,7 +568,14 @@ def consultar():
         auditores=auditores
     )
 
-@bitacora_bp.route("/detalle/<int:registro_id>")
+
+# ============================================================
+# DETALLE
+# ============================================================
+
+@bitacora_bp.route(
+    "/detalle/<int:registro_id>"
+)
 @login_required
 def detalle(registro_id):
 
@@ -425,16 +584,31 @@ def detalle(registro_id):
         registro_id
     )
 
-    if registro is  None:
-        flash("El registro no existe.", "danger")
-        return redirect(url_for("bitacora.consultar"))
+    if registro is None:
+
+        flash(
+            "El registro no existe.",
+            "danger"
+        )
+
+        return redirect(
+            url_for("bitacora.consultar")
+        )
 
     return render_template(
         "bitacora/detalle.html",
         registro=registro
     )
 
-@bitacora_bp.route("/editar/<int:registro_id>", methods=["GET", "POST"])
+
+# ============================================================
+# EDITAR
+# ============================================================
+
+@bitacora_bp.route(
+    "/editar/<int:registro_id>",
+    methods=["GET", "POST"]
+)
 @login_required
 def editar(registro_id):
 
@@ -444,8 +618,19 @@ def editar(registro_id):
     )
 
     if registro is None:
-        flash("El registro no existe.", "danger")
-        return redirect(url_for("bitacora.consultar"))
+
+        flash(
+            "El registro no existe.",
+            "danger"
+        )
+
+        return redirect(
+            url_for("bitacora.consultar")
+        )
+
+    # --------------------------------------------------------
+    # CATALOGOS
+    # --------------------------------------------------------
 
     empresas = (
         Empresa.query
@@ -489,6 +674,10 @@ def editar(registro_id):
         .all()
     )
 
+    # --------------------------------------------------------
+    # POST
+    # --------------------------------------------------------
+
     if request.method == "POST":
 
         try:
@@ -506,6 +695,7 @@ def editar(registro_id):
             hora_salida = None
 
             if request.form.get("hora_salida"):
+
                 hora_salida = datetime.strptime(
                     request.form["hora_salida"],
                     "%H:%M"
@@ -535,71 +725,103 @@ def editar(registro_id):
                 request.form["auditor_id"]
             )
 
+            # ------------------------------------------------
+            # VALIDAR AREA
+            # ------------------------------------------------
+
             area = db.session.get(
                 Area,
                 area_id
             )
 
             if area is None:
+
                 raise ValueError(
                     "El área seleccionada no existe."
                 )
 
             if area.nave_id != nave_id:
+
                 raise ValueError(
                     "El área no pertenece a la nave seleccionada."
                 )
 
+            # ------------------------------------------------
+            # VALIDAR CODIGO
+            # ------------------------------------------------
+
             codigo = (
-                request.form["codigo_requerimiento"]
+                request.form[
+                    "codigo_requerimiento"
+                ]
                 .strip()
                 .upper()
             )
 
-            
-            if not re.fullmatch(r"(CR|RR|IR)\d+", codigo):
+            if not re.fullmatch(
+                r"(CR|RR|IR)\d+",
+                codigo
+            ):
+
                 raise ValueError(
-                    "El código debe tener formato CR/RR/IR seguido de números. "
+                    "El código debe tener formato "
+                    "CR/RR/IR seguido de números."
                 )
 
-            tipo_codigo = codigo [:2]
-            
+            tipo_codigo = codigo[:2]
+
             tipo = db.session.get(
                 TipoRequerimiento,
                 tipo_id
             )
 
             if tipo is None:
+
                 raise ValueError(
                     "El tipo de requerimiento no existe."
                 )
 
             if tipo.codigo.upper() != tipo_codigo:
+
                 raise ValueError(
-                    "El tipo de requerimiento no corresponde al código."
+                    "El tipo de requerimiento "
+                    "no corresponde al código."
                 )
 
+            # ------------------------------------------------
+            # ACTUALIZAR REGISTRO
+            # ------------------------------------------------
+
             registro.fecha = fecha
+
             registro.hora_entrada = hora_entrada
+
             registro.hora_salida = hora_salida
 
             registro.soporte = (
-                request.form["soporte"]
+                request.form[
+                    "soporte"
+                ]
                 .strip()
             )
 
             registro.empresa_id = empresa_id
 
             registro.actividad = (
-                request.form["actividad"]
+                request.form[
+                    "actividad"
+                ]
                 .strip()
             )
 
             registro.nave_id = nave_id
+
             registro.area_id = area_id
 
             registro.bitacora_lectora = (
-                request.form["bitacora_lectora"]
+                request.form[
+                    "bitacora_lectora"
+                ]
                 .strip()
             )
 
@@ -608,25 +830,38 @@ def editar(registro_id):
             registro.codigo_requerimiento = codigo
 
             registro.argonite_anexo1 = (
-                request.form.get("argonite_anexo1") == "SI"
+                request.form.get(
+                    "argonite_anexo1"
+                ) == "SI"
             )
 
             registro.personal_id = personal_id
 
             registro.numero_registro = int(
-                request.form["numero_registro"]
+                request.form[
+                    "numero_registro"
+                ]
             )
 
             registro.auditor_id = auditor_id
 
             registro.amonestacion = int(
-                request.form["amonestacion"]
+                request.form[
+                    "amonestacion"
+                ]
             )
 
             registro.comentario = (
-                request.form.get("comentario", "")
+                request.form.get(
+                    "comentario",
+                    ""
+                )
                 .strip()
             )
+
+            # ------------------------------------------------
+            # GUARDAR
+            # ------------------------------------------------
 
             db.session.commit()
 
