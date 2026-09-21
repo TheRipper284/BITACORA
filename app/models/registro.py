@@ -1,8 +1,8 @@
 from app.extensions import db
 
-class RegistroBitacora(db.Model):
 
-    __tablename__ = 'registros_bitacora'
+class RegistroBitacora(db.Model):
+    __tablename__ = "registros_bitacora"
 
     id = db.Column(
         db.BigInteger,
@@ -11,7 +11,7 @@ class RegistroBitacora(db.Model):
 
     numero = db.Column(
         db.Integer,
-        nullable=False,
+        nullable=False
     )
 
     fecha = db.Column(
@@ -34,9 +34,8 @@ class RegistroBitacora(db.Model):
         nullable=False
     )
 
-    empresa_id = db.Column(
-        db.Integer,
-        db.ForeignKey('empresa.id'),
+    empresa = db.Column(
+        db.String(150),
         nullable=False
     )
 
@@ -47,25 +46,25 @@ class RegistroBitacora(db.Model):
 
     nave_id = db.Column(
         db.Integer,
-        db.ForeignKey('naves.id'),
+        db.ForeignKey("naves.id"),
         nullable=False
     )
 
     area_id = db.Column(
         db.Integer,
-        db.ForeignKey('areas.id'),
+        db.ForeignKey("areas.id"),
         nullable=False
     )
 
     bitacora_lectora = db.Column(
         db.String(50),
         nullable=False,
-        default='Bitacora'
+        default="Bitacora"
     )
 
     tipo_requerimiento_id = db.Column(
         db.Integer,
-        db.ForeignKey('tipos_requerimiento.id'),
+        db.ForeignKey("tipos_requerimiento.id"),
         nullable=False
     )
 
@@ -82,7 +81,7 @@ class RegistroBitacora(db.Model):
 
     personal_id = db.Column(
         db.Integer,
-        db.ForeignKey('personal.id'),
+        db.ForeignKey("personal.id"),
         nullable=False
     )
 
@@ -94,7 +93,7 @@ class RegistroBitacora(db.Model):
 
     auditor_id = db.Column(
         db.Integer,
-        db.ForeignKey('auditores.id'),
+        db.ForeignKey("auditores.id"),
         nullable=False
     )
 
@@ -122,10 +121,9 @@ class RegistroBitacora(db.Model):
         onupdate=db.func.now()
     )
 
-    empresa = db.relationship(
-        "Empresa",
-        back_populates="registros"
-    )
+    # ========================================================
+    # RELACIONES
+    # ========================================================
 
     nave = db.relationship(
         "Nave",
@@ -152,11 +150,19 @@ class RegistroBitacora(db.Model):
         back_populates="registros"
     )
 
-    __table_args__ = (
+    # ========================================================
+    # INDICES
+    # ========================================================
 
+    __table_args__ = (
         db.Index(
             "ix_registro_fecha",
             "fecha"
+        ),
+
+        db.Index(
+            "ix_registro_empresa",
+            "empresa"
         ),
 
         db.Index(
@@ -170,12 +176,6 @@ class RegistroBitacora(db.Model):
         ),
 
         db.Index(
-            "ix_registros_empresa_fecha",
-            "empresa_id",
-            "fecha"
-        ),
-
-        db.Index(
             "ix_registros_nave_fecha",
             "nave_id",
             "fecha"
@@ -184,6 +184,12 @@ class RegistroBitacora(db.Model):
         db.Index(
             "ix_registros_area_fecha",
             "area_id",
+            "fecha"
+        ),
+
+        db.Index(
+            "ix_registros_empresa_fecha",
+            "empresa",
             "fecha"
         ),
     )

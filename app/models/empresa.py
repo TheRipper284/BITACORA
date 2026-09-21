@@ -1,8 +1,8 @@
 from app.extensions import db
 
-class Empresa(db.Model):
 
-    __tablename__ = 'empresa'
+class Empresa(db.Model):
+    __tablename__ = "empresa"
 
     id = db.Column(
         db.Integer,
@@ -19,9 +19,4 @@ class Empresa(db.Model):
         db.Boolean,
         nullable=False,
         default=True
-    )
-
-    registros = db.relationship(
-        "RegistroBitacora",
-        back_populates="empresa"
     )

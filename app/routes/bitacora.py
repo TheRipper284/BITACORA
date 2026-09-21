@@ -1,6 +1,5 @@
-from sqlalchemy import or_
-
-from datetime import date, datetime
+from datetime import datetime
+import re
 
 from flask import (
     Blueprint,
@@ -17,8 +16,9 @@ from flask_login import (
     current_user
 )
 
+from app.routes.auth import admin_required
+
 from app.models import (
-    Empresa,
     Nave,
     Area,
     Personal,
@@ -33,8 +33,6 @@ from app.services.bitacora_service import (
 )
 
 from app.extensions import db
-
-import re
 
 
 bitacora_bp = Blueprint(
@@ -51,8 +49,6 @@ bitacora_bp = Blueprint(
 @bitacora_bp.route("/")
 @login_required
 def index():
-
-    from app.models import RegistroBitacora
 
     registros_activos = (
         RegistroBitacora.query
@@ -83,13 +79,6 @@ def index():
 )
 @login_required
 def registrar():
-
-    empresas = (
-        Empresa.query
-        .filter_by(activo=True)
-        .order_by(Empresa.nombre)
-        .all()
-    )
 
     naves = (
         Nave.query
@@ -122,7 +111,6 @@ def registrar():
     if request.method == "POST":
 
         try:
-
             fecha = datetime.strptime(
                 request.form["fecha"],
                 "%Y-%m-%d"
@@ -132,10 +120,6 @@ def registrar():
                 request.form["hora_entrada"],
                 "%H:%M"
             ).time()
-
-            empresa_id = int(
-                request.form["empresa_id"]
-            )
 
             nave_id = int(
                 request.form["nave_id"]
@@ -172,24 +156,31 @@ def registrar():
                 soporte=request.form[
                     "soporte"
                 ].strip(),
-                empresa_id=empresa_id,
+
+                empresa=request.form[
+                    "empresa"
+                ].strip(),
+
                 actividad=request.form[
                     "actividad"
                 ].strip(),
+
                 nave_id=nave_id,
                 area_id=area_id,
+
                 bitacora_lectora=request.form[
                     "bitacora_lectora"
                 ].strip(),
-                codigo_requerimiento=(
-                    request.form[
-                        "codigo_requerimiento"
-                    ]
-                ),
+
+                codigo_requerimiento=request.form[
+                    "codigo_requerimiento"
+                ],
+
                 argonite_anexo1=argonite,
                 personal_id=personal_id,
                 auditor_id=auditor_id,
                 amonestacion=amonestacion,
+
                 comentario=request.form.get(
                     "comentario",
                     ""
@@ -217,18 +208,23 @@ def registrar():
 
         except Exception as error:
 
-            print("ERROR AL CREAR REGISTRO:")
-            print(type(error).__name__)
+            db.session.rollback()
+
+            print(
+                "ERROR AL CREAR REGISTRO:"
+            )
+            print(
+                type(error).__name__
+            )
             print(error)
 
             flash(
-                f"No fue posible crear tu registro: {error}",
+                "No fue posible crear el registro.",
                 "error"
             )
 
     return render_template(
         "bitacora/registrar.html",
-        empresas=empresas,
         naves=naves,
         areas=areas,
         personal=personal,
@@ -276,8 +272,6 @@ def obtener_areas(nave_id):
 @login_required
 def salida(registro_id):
 
-    from app.models import RegistroBitacora
-
     registro = db.session.get(
         RegistroBitacora,
         registro_id
@@ -291,12 +285,16 @@ def salida(registro_id):
         )
 
         return redirect(
-            url_for("bitacora.index")
+            url_for(
+                "bitacora.index"
+            )
         )
 
     try:
 
-        registrar_salida(registro)
+        registrar_salida(
+            registro
+        )
 
         flash(
             "Hora de salida registrada correctamente.",
@@ -310,8 +308,19 @@ def salida(registro_id):
             "error"
         )
 
+    except Exception:
+
+        db.session.rollback()
+
+        flash(
+            "No fue posible registrar la salida.",
+            "error"
+        )
+
     return redirect(
-        url_for("bitacora.index")
+        url_for(
+            "bitacora.index"
+        )
     )
 
 
@@ -335,8 +344,8 @@ def consultar():
         ""
     ).strip()
 
-    empresa_id = request.args.get(
-        "empresa_id",
+    empresa = request.args.get(
+        "empresa",
         ""
     ).strip()
 
@@ -404,11 +413,11 @@ def consultar():
     # EMPRESA
     # --------------------------------------------------------
 
-    if empresa_id:
+    if empresa:
 
         query = query.filter(
-            RegistroBitacora.empresa_id == int(
-                empresa_id
+            RegistroBitacora.empresa.ilike(
+                f"%{empresa}%"
             )
         )
 
@@ -514,13 +523,6 @@ def consultar():
     # CATALOGOS
     # --------------------------------------------------------
 
-    empresas = (
-        Empresa.query
-        .filter_by(activo=True)
-        .order_by(Empresa.nombre)
-        .all()
-    )
-
     naves = (
         Nave.query
         .filter_by(activo=True)
@@ -560,7 +562,6 @@ def consultar():
         "bitacora/consultar.html",
         paginacion=paginacion,
         registros=paginacion.items,
-        empresas=empresas,
         naves=naves,
         areas=areas,
         tipos=tipos,
@@ -592,7 +593,9 @@ def detalle(registro_id):
         )
 
         return redirect(
-            url_for("bitacora.consultar")
+            url_for(
+                "bitacora.consultar"
+            )
         )
 
     return render_template(
@@ -609,7 +612,7 @@ def detalle(registro_id):
     "/editar/<int:registro_id>",
     methods=["GET", "POST"]
 )
-@login_required
+@admin_required
 def editar(registro_id):
 
     registro = db.session.get(
@@ -625,19 +628,14 @@ def editar(registro_id):
         )
 
         return redirect(
-            url_for("bitacora.consultar")
+            url_for(
+                "bitacora.consultar"
+            )
         )
 
     # --------------------------------------------------------
     # CATALOGOS
     # --------------------------------------------------------
-
-    empresas = (
-        Empresa.query
-        .filter_by(activo=True)
-        .order_by(Empresa.nombre)
-        .all()
-    )
 
     naves = (
         Nave.query
@@ -694,16 +692,34 @@ def editar(registro_id):
 
             hora_salida = None
 
-            if request.form.get("hora_salida"):
+            if request.form.get(
+                "hora_salida"
+            ):
 
                 hora_salida = datetime.strptime(
                     request.form["hora_salida"],
                     "%H:%M"
                 ).time()
 
-            empresa_id = int(
-                request.form["empresa_id"]
+            empresa = (
+                request.form[
+                    "empresa"
+                ]
+                .strip()
             )
+
+            if not empresa:
+
+                raise ValueError(
+                    "La empresa es obligatoria."
+                )
+
+            if len(empresa) > 150:
+
+                raise ValueError(
+                    "La empresa no puede superar "
+                    "los 150 caracteres."
+                )
 
             nave_id = int(
                 request.form["nave_id"]
@@ -726,6 +742,22 @@ def editar(registro_id):
             )
 
             # ------------------------------------------------
+            # VALIDAR NAVE
+            # ------------------------------------------------
+
+            nave = db.session.get(
+                Nave,
+                nave_id
+            )
+
+            if nave is None or not nave.activo:
+
+                raise ValueError(
+                    "La nave seleccionada no existe "
+                    "o está inactiva."
+                )
+
+            # ------------------------------------------------
             # VALIDAR AREA
             # ------------------------------------------------
 
@@ -740,10 +772,38 @@ def editar(registro_id):
                     "El área seleccionada no existe."
                 )
 
+            if not area.activo:
+
+                raise ValueError(
+                    "El área seleccionada está inactiva."
+                )
+
             if area.nave_id != nave_id:
 
                 raise ValueError(
-                    "El área no pertenece a la nave seleccionada."
+                    "El área no pertenece "
+                    "a la nave seleccionada."
+                )
+
+            # ------------------------------------------------
+            # VALIDAR TIPO
+            # ------------------------------------------------
+
+            tipo = db.session.get(
+                TipoRequerimiento,
+                tipo_id
+            )
+
+            if tipo is None:
+
+                raise ValueError(
+                    "El tipo de requerimiento no existe."
+                )
+
+            if not tipo.activo:
+
+                raise ValueError(
+                    "El tipo de requerimiento está inactivo."
                 )
 
             # ------------------------------------------------
@@ -770,17 +830,6 @@ def editar(registro_id):
 
             tipo_codigo = codigo[:2]
 
-            tipo = db.session.get(
-                TipoRequerimiento,
-                tipo_id
-            )
-
-            if tipo is None:
-
-                raise ValueError(
-                    "El tipo de requerimiento no existe."
-                )
-
             if tipo.codigo.upper() != tipo_codigo:
 
                 raise ValueError(
@@ -789,14 +838,56 @@ def editar(registro_id):
                 )
 
             # ------------------------------------------------
+            # VALIDAR PERSONAL
+            # ------------------------------------------------
+
+            personal_obj = db.session.get(
+                Personal,
+                personal_id
+            )
+
+            if (
+                personal_obj is None
+                or not personal_obj.activo
+            ):
+
+                raise ValueError(
+                    "El personal seleccionado "
+                    "no existe o está inactivo."
+                )
+
+            # ------------------------------------------------
+            # VALIDAR AUDITOR
+            # ------------------------------------------------
+
+            auditor_obj = db.session.get(
+                Auditor,
+                auditor_id
+            )
+
+            if (
+                auditor_obj is None
+                or not auditor_obj.activo
+            ):
+
+                raise ValueError(
+                    "El auditor seleccionado "
+                    "no existe o está inactivo."
+                )
+
+            # ------------------------------------------------
             # ACTUALIZAR REGISTRO
             # ------------------------------------------------
 
             registro.fecha = fecha
 
-            registro.hora_entrada = hora_entrada
+            registro.hora_entrada = (
+                hora_entrada
+            )
 
-            registro.hora_salida = hora_salida
+            registro.hora_salida = (
+                hora_salida
+            )
 
             registro.soporte = (
                 request.form[
@@ -805,7 +896,7 @@ def editar(registro_id):
                 .strip()
             )
 
-            registro.empresa_id = empresa_id
+            registro.empresa = empresa
 
             registro.actividad = (
                 request.form[
@@ -825,9 +916,13 @@ def editar(registro_id):
                 .strip()
             )
 
-            registro.tipo_requerimiento_id = tipo_id
+            registro.tipo_requerimiento_id = (
+                tipo_id
+            )
 
-            registro.codigo_requerimiento = codigo
+            registro.codigo_requerimiento = (
+                codigo
+            )
 
             registro.argonite_anexo1 = (
                 request.form.get(
@@ -835,7 +930,9 @@ def editar(registro_id):
                 ) == "SI"
             )
 
-            registro.personal_id = personal_id
+            registro.personal_id = (
+                personal_id
+            )
 
             registro.numero_registro = int(
                 request.form[
@@ -843,7 +940,9 @@ def editar(registro_id):
                 ]
             )
 
-            registro.auditor_id = auditor_id
+            registro.auditor_id = (
+                auditor_id
+            )
 
             registro.amonestacion = int(
                 request.form[
@@ -877,7 +976,10 @@ def editar(registro_id):
                 )
             )
 
-        except (ValueError, KeyError) as error:
+        except (
+            ValueError,
+            KeyError
+        ) as error:
 
             db.session.rollback()
 
@@ -886,10 +988,26 @@ def editar(registro_id):
                 "danger"
             )
 
+        except Exception as error:
+
+            db.session.rollback()
+
+            print(
+                "ERROR AL EDITAR REGISTRO:"
+            )
+            print(
+                type(error).__name__
+            )
+            print(error)
+
+            flash(
+                "No fue posible actualizar el registro.",
+                "danger"
+            )
+
     return render_template(
         "bitacora/editar.html",
         registro=registro,
-        empresas=empresas,
         naves=naves,
         areas=areas,
         tipos=tipos,
