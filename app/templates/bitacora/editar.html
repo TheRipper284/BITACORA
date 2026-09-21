@@ -13,6 +13,12 @@
 
 <form method="POST">
 
+    <input
+        type="hidden"
+        name="csrf_token"
+        value="{{ csrf_token() }}"
+    >
+
     <div>
         <label>Fecha:</label>
 
@@ -69,22 +75,13 @@
     <div>
         <label>Empresa:</label>
 
-        <select name="empresa_id" required>
-
-            {% for empresa in empresas %}
-
-                <option
-                    value="{{ empresa.id }}"
-                    {% if empresa.id == registro.empresa_id %}
-                        selected
-                    {% endif %}
-                >
-                    {{ empresa.nombre }}
-                </option>
-
-            {% endfor %}
-
-        </select>
+        <input
+            type="text"
+            name="empresa"
+            value="{{ registro.empresa }}"
+            maxlength="150"
+            required
+        >
     </div>
 
     <br>
@@ -103,7 +100,11 @@
     <div>
         <label>Nave:</label>
 
-        <select name="nave_id" id="nave_id" required>
+        <select
+            name="nave_id"
+            id="nave_id"
+            required
+        >
 
             {% for nave in naves %}
 
@@ -126,7 +127,11 @@
     <div>
         <label>Área:</label>
 
-        <select name="area_id" id="area_id" required>
+        <select
+            name="area_id"
+            id="area_id"
+            required
+        >
 
             {% for area in areas %}
 
@@ -192,6 +197,7 @@
             type="text"
             name="codigo_requerimiento"
             value="{{ registro.codigo_requerimiento }}"
+            maxlength="20"
             required
         >
     </div>
@@ -201,7 +207,10 @@
     <div>
         <label>Argonite / Anexo 1:</label>
 
-        <select name="argonite_anexo1">
+        <select
+            name="argonite_anexo1"
+            required
+        >
 
             <option
                 value="0"
@@ -229,7 +238,10 @@
     <div>
         <label>Personal:</label>
 
-        <select name="personal_id" required>
+        <select
+            name="personal_id"
+            required
+        >
 
             {% for persona in personal %}
 
@@ -252,7 +264,10 @@
     <div>
         <label>Auditoría:</label>
 
-        <select name="auditor_id" required>
+        <select
+            name="auditor_id"
+            required
+        >
 
             {% for auditor in auditores %}
 
@@ -288,7 +303,9 @@
     <div>
         <label>Comentario:</label>
 
-        <textarea name="comentario">{{ registro.comentario or '' }}</textarea>
+        <textarea
+            name="comentario"
+        >{{ registro.comentario or '' }}</textarea>
     </div>
 
     <br>

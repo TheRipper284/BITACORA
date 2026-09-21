@@ -11,18 +11,24 @@ Iniciar sesión
 <h2>Iniciar sesión</h2>
 
 <form method="POST">
+
+    <input
+        type="hidden"
+        name="csrf_token"
+        value="{{ csrf_token() }}"
+    >
+
     <div>
         <label for="usuario">
             Usuario
         </label>
 
-
         <input 
-        type="text"
-        id="usuario"
-        name="usuario"
-        required
-        autocomplete="username"
+            type="text"
+            id="usuario"
+            name="usuario"
+            required
+            autocomplete="username"
         >
     </div>
 
@@ -34,11 +40,11 @@ Iniciar sesión
         </label>
 
         <input 
-        type="password"
-        id="password"
-        name="password"
-        required
-        autocomplete="current-password"
+            type="password"
+            id="password"
+            name="password"
+            required
+            autocomplete="current-password"
         >
     </div>
 
@@ -47,6 +53,7 @@ Iniciar sesión
     <button type="submit">
         Iniciar sesión
     </button>
+
 </form>
 
 {% endblock %}

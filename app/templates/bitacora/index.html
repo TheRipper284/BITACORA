@@ -66,7 +66,7 @@
                         {{ registro.personal.nombre }}
                     </td>
                     <td>
-                        {{ registro.empresa.nombre }}
+                        {{ registro.empresa }}
                     </td>
                     <td>
                         {{ registro.nave.codigo }}
@@ -78,8 +78,8 @@
                         {{ registro.codigo_requerimiento }}
                     </td>
                     <td>
-                        <form 
-                            method="POST" 
+                        <form
+                            method="POST"
                             action="{{
                                 url_for(
                                     'bitacora.salida',
@@ -87,10 +87,15 @@
                                 )
                             }}"
                         >
-                        <button type="submit">
-                            Registrar salida
-                        </button>
+                            <input
+                                type="hidden"
+                                name="csrf_token"
+                                value="{{ csrf_token() }}"
+                            >
 
+                            <button type="submit">
+                                Registrar salida
+                            </button>
                         </form>
                     </td>
                 </tr>
