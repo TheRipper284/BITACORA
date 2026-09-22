@@ -137,8 +137,10 @@
     ← Regresar a consulta
 </a>
 
-<a href="{{ url_for('bitacora.editar', registro_id=registro.id) }}">
-    Editar registro
-</a>
+{% if current_user.es_admin() %}
+    <a href="{{ url_for('bitacora.editar', registro_id=registro.id) }}">
+        Editar registro
+    </a>
+{% endif %}
 
 {% endblock %}
