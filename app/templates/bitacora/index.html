@@ -20,6 +20,14 @@
     Rol: {{usuario.rol }}
 </p>
 
+{% if current_user.es_admin() %}
+    <p>
+        <a href="{{ url_for('admin.index') }}">
+            Administración
+        </a>
+    </p>
+{% endif %}
+
 <br>
 
 <a href="{{ url_for('bitacora.consultar') }}">

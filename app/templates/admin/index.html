@@ -5,7 +5,8 @@ Administración
 {% endblock %}
 
 {% block content %}
-<h1>Administracion</h1>
+
+<h1>Administración</h1>
 
 <h2>
     Bienvenido, {{ usuario.nombre }}
@@ -20,15 +21,62 @@ Administración
 </h3>
 
 <ul>
-    <li>Gestionar usuarios</li>
-    <li>Gestionar catálogo</li>
-    <li>Consultar bitácora</li>
-    <li>Modificar registros</li>
-    <li>Gestionar reportes excel</li>
+    <li>
+        <a href="{{ url_for('bitacora.consultar') }}">
+            Consultar bitácora
+        </a>
+    </li>
+
+    <li>
+        <strong>Descargar reporte mensual</strong>
+
+        <form
+            method="GET"
+            action="{{ url_for('reportes.exportar') }}"
+        >
+            <label for="mes">
+                Mes:
+            </label>
+
+            <select name="mes" id="mes" required>
+                <option value="1">Enero</option>
+                <option value="2">Febrero</option>
+                <option value="3">Marzo</option>
+                <option value="4">Abril</option>
+                <option value="5">Mayo</option>
+                <option value="6">Junio</option>
+                <option value="7">Julio</option>
+                <option value="8">Agosto</option>
+                <option value="9">Septiembre</option>
+                <option value="10">Octubre</option>
+                <option value="11">Noviembre</option>
+                <option value="12">Diciembre</option>
+            </select>
+
+            <label for="año">
+                Año:
+            </label>
+
+            <input
+                type="number"
+                name="año"
+                id="año"
+                min="2000"
+                max="2100"
+                required
+            >
+
+            <button type="submit">
+                Descargar Excel
+            </button>
+        </form>
+    </li>
 </ul>
 
+<br>
+
 <a href="{{ url_for('bitacora.index') }}">
-    Regresar a bitacora
+    Regresar a bitácora
 </a>
 
 <br>
