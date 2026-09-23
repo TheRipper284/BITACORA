@@ -27,6 +27,11 @@ class Nave(db.Model):
         cascade="all, delete-orphan"
     )
 
+    auditores = db.relationship(
+        "Auditor",
+        back_populates = "nave"
+    )
+
     registros = db.relationship(
         "RegistroBitacora",
         back_populates="nave"

@@ -80,7 +80,13 @@ class RegistroBitacora(db.Model):
     )
 
     # PERSONAL COMO TEXTO
-    personal = db.Column(
+    tipo_personal = db.Column(
+        db.String(20),
+        nullable=False,
+        default="Usuario"
+    )
+
+    nombre = db.Column(
         db.String(150),
         nullable=False
     )
@@ -158,8 +164,8 @@ class RegistroBitacora(db.Model):
         ),
 
         db.Index(
-            "ix_registro_personal",
-            "personal"
+            "ix_registro_nombre",
+            "nombre"
         ),
 
         db.Index(

@@ -147,11 +147,123 @@ def crear_registro(
     bitacora_lectora,
     codigo_requerimiento,
     argonite_anexo1,
-    personal,
+    tipo_personal,
+    nombre,
     auditor_id,
     amonestacion,
     comentario
 ):
+
+    empresa = empresa.strip()
+
+    if not empresa:
+        raise ValueError(
+            "La empresa es obligatoria."
+        )
+
+    if len(empresa) > 150:
+        raise ValueError(
+            "La empresa no puede superar "
+            "los 150 caracteres."
+        )
+
+    tipo_personal = tipo_personal.strip()
+
+    if tipo_personal not in (
+        "Usuario",
+        "Visitante"
+    ):
+        raise ValueError(
+            "El tipo de personal no es válido."
+        )
+
+    nombre = nombre.strip()
+
+    if not nombre:
+        raise ValueError(
+            "El nombre de la persona es obligatorio."
+        )
+
+    if len(nombre) > 150:
+        raise ValueError(
+            "El nombre no puede superar "
+            "los 150 caracteres."
+        )
+
+    codigo_requerimiento = (
+        codigo_requerimiento
+        .strip()
+        .upper()
+    )
+
+    tipo_requerimiento = obtener_tipo_requerimiento(
+        codigo_requerimiento
+    )
+
+    validar_catalogos(
+        nave_id=nave_id,
+        area_id=area_id,
+        auditor_id=auditor_id
+    )
+
+    numero = obtener_siguiente_numero(
+        fecha
+    )
+
+    registro = RegistroBitacora(
+
+        numero=numero,
+
+        fecha=fecha,
+
+        hora_entrada=hora_entrada,
+
+        soporte=soporte,
+
+        empresa=empresa,
+
+        actividad=actividad,
+
+        nave_id=nave_id,
+
+        area_id=area_id,
+
+        bitacora_lectora=bitacora_lectora,
+
+        tipo_requerimiento_id=tipo_requerimiento.id,
+
+        codigo_requerimiento=codigo_requerimiento,
+
+        argonite_anexo1=argonite_anexo1,
+
+        tipo_personal=tipo_personal,
+
+        nombre=nombre,
+
+        numero_registro=1,
+
+        auditor_id=auditor_id,
+
+        amonestacion=amonestacion,
+
+        comentario=comentario
+    )
+
+    try:
+
+        db.session.add(
+            registro
+        )
+
+        db.session.commit()
+
+    except Exception:
+
+        db.session.rollback()
+
+        raise
+
+    return registro
 
     # --------------------------------------------------------
     # VALIDAR EMPRESA
@@ -205,10 +317,57 @@ def crear_registro(
     # VALIDAR CATALOGOS
     # --------------------------------------------------------
 
-    validar_catalogos(
-        nave_id=nave_id,
-        auditor_id=auditor_id
-    )
+    def validar_catalogos(
+    nave_id,
+    area_id,
+    auditor_id
+    ):
+
+        nave = db.session.get(
+            Nave,
+            nave_id
+        )
+
+        if not nave or not nave.activo:
+            raise ValueError(
+                "La nave seleccionada no existe "
+                "o está inactiva."
+            )
+
+        area = (
+            Area.query
+            .filter_by(
+                id=area_id,
+                nave_id=nave_id,
+                activo=True
+            )
+            .first()
+        )
+
+        if not area:
+            raise ValueError(
+                "El área seleccionada no existe, "
+                "está inactiva o no pertenece a la nave."
+            )
+
+        auditor = (
+            Auditor.query
+            .filter_by(
+                id=auditor_id,
+                nave_id=nave_id,
+                area_id=area_id,
+                activo=True
+            )
+            .first()
+        )
+
+        if not auditor:
+            raise ValueError(
+                "El auditor seleccionado no pertenece "
+                "a la nave y área seleccionadas."
+            )
+
+        return nave, area, auditor
 
     # --------------------------------------------------------
     # VALIDAR AREA

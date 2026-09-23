@@ -31,6 +31,11 @@ class Area(db.Model):
         back_populates="areas"
     )
 
+    auditores = db.relationship(
+        "Auditor",
+        back_populates="area"
+    )
+
     registros = db.relationship(
         "RegistroBitacora",
         back_populates="area"

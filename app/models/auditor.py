@@ -1,8 +1,9 @@
 from app.extensions import db
 
+
 class Auditor(db.Model):
 
-    __tablename__ = 'auditores'
+    __tablename__ = "auditores"
 
     id = db.Column(
         db.Integer,
@@ -15,10 +16,32 @@ class Auditor(db.Model):
         unique=True
     )
 
+    nave_id = db.Column(
+        db.Integer,
+        db.ForeignKey("naves.id"),
+        nullable=True
+    )
+
+    area_id = db.Column(
+        db.Integer,
+        db.ForeignKey("areas.id"),
+        nullable=True
+    )
+
     activo = db.Column(
         db.Boolean,
         nullable=False,
         default=True
+    )
+
+    nave = db.relationship(
+        "Nave",
+        back_populates="auditores"
+    )
+
+    area = db.relationship(
+        "Area",
+        back_populates="auditores"
     )
 
     registros = db.relationship(
