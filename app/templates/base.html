@@ -1,28 +1,45 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Bitácora{% endblock %}</title>
-    <link rel="icon" type="image/x-icon href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/variables.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/form-panel.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/buttons/btn-gold.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/buttons/download-button.css') }}">
+    {% block extra_css %}{% endblock %}
 </head>
-<body>
-    {% with messages = get_flashed_messages(with_categories=true) %}
+<body class="{% block body_class %}{% endblock %}">
+    <header class="app-header" role="banner">
+        <div class="app-header__brand">
+            <span class="app-header__mark" aria-hidden="true"></span>
+            <span class="app-header__title">Bitácora de acceso</span>
+        </div>
+    </header>
+    <main class="page {% block page_class %}{% endblock %}">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="flash-messages">
+                    {% for category, message in messages %}
+                        <li class="flash flash--{{ category }}">
+                            {{ message }}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
 
-        {% if messages %}
-
-            {% for category, message in messages %}
-                <p>
-                    {{ message }}
-                </p>
-            {% endfor %}
-            
-        {% endif %}
-    {% endwith %}
-
-    {% block content %}
-
-    {% endblock %}
-
+        {% block content %}
+        {% endblock %}
+    </main>
+    {% block extra_js %}{% endblock %}
 </body>
 </html>

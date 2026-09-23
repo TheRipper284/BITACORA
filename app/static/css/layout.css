@@ -1,0 +1,200 @@
+.app-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    height: var(--header-height);
+    display: flex;
+    align-items: center;
+    padding: 0 var(--space-lg);
+    background: rgba(10, 10, 10, 0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.app-header::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        var(--color-accent) 20%,
+        var(--color-accent) 80%,
+        transparent
+    );
+    opacity: 0.85;
+}
+
+body.login-page .app-header {
+    display: none;
+}
+
+.app-header__brand {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+}
+
+.app-header__mark {
+    width: 2rem;
+    height: 2rem;
+    border: 2px solid var(--color-text);
+    border-radius: 50%;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.app-header__mark::before {
+    content: "";
+    position: absolute;
+    inset: 5px;
+    border: 1px solid var(--color-text-muted);
+    border-radius: 50%;
+    opacity: 0.5;
+}
+
+.app-header__title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: var(--letter-wide);
+    text-transform: uppercase;
+    color: var(--color-text);
+}
+
+.page {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: var(--space-xl) var(--space-lg) var(--space-2xl);
+}
+
+.page--wide {
+    max-width: var(--max-width-wide);
+}
+
+.page--centered {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 100vh;
+    max-width: 420px;
+}
+
+.page-header {
+    margin-bottom: var(--space-xl);
+    padding-bottom: var(--space-lg);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.page-header p {
+    margin-bottom: var(--space-sm);
+}
+
+.page-header .dashboard-actions {
+    margin-top: var(--space-md);
+    margin-bottom: 0;
+}
+
+.page-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+    align-items: center;
+    margin-top: var(--space-xl);
+    padding-top: var(--space-lg);
+    border-top: 1px solid var(--color-border);
+}
+
+.nav-links {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 var(--space-xl);
+}
+
+.nav-links > li {
+    margin-bottom: var(--space-md);
+    padding: var(--space-lg);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    transition:
+        border-color var(--transition-fast),
+        box-shadow var(--transition-fast);
+}
+
+.nav-links > li:hover {
+    border-color: var(--color-border-strong);
+    box-shadow: var(--shadow-sm);
+}
+
+.nav-links a {
+    font-weight: 500;
+    color: var(--color-chrome);
+}
+
+.nav-links a:hover {
+    color: var(--color-accent-hover);
+}
+
+.section {
+    margin-bottom: var(--space-xl);
+}
+
+.dashboard-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+    margin: var(--space-lg) 0 var(--space-xl);
+}
+
+.action-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.75rem;
+    padding: 0 var(--space-lg);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-text);
+    background: var(--color-surface-elevated);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius);
+    transition:
+        background var(--transition-fast),
+        border-color var(--transition-fast),
+        color var(--transition-fast);
+}
+
+.action-link:hover {
+    text-decoration: none;
+    background: var(--color-surface);
+    border-color: var(--color-chrome-dark);
+    color: var(--color-primary-hover);
+}
+
+.action-link--primary {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: #fff;
+}
+
+.action-link--primary:hover {
+    background: var(--color-accent-hover);
+    border-color: var(--color-accent-hover);
+    color: #fff;
+}
+
+.action-link--ghost {
+    background: transparent;
+    border-color: var(--color-border);
+    color: var(--color-text-muted);
+}
+
+.action-link--ghost:hover {
+    color: var(--color-text);
+    border-color: var(--color-border-strong);
+}

@@ -1,0 +1,114 @@
+.report-export-form {
+    margin-top: var(--space-md);
+}
+
+.report-export-form .form-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: var(--space-md);
+    margin-bottom: var(--space-md);
+}
+
+.report-export-form .form-field {
+    margin-bottom: 0;
+}
+
+.report-export-form .form-field select,
+.report-export-form .form-field input[type="number"] {
+    width: auto;
+    min-width: 7rem;
+}
+
+.download-button {
+    position: relative;
+    border-width: 0;
+    color: white;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: var(--radius);
+    z-index: 1;
+    background: transparent;
+    padding: 0;
+    font-family: inherit;
+}
+
+.download-button .docs {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    min-height: 2.75rem;
+    min-width: 220px;
+    padding: 0 1rem;
+    border-radius: var(--radius);
+    z-index: 1;
+    background-color: var(--color-surface-elevated);
+    border: 1px solid var(--color-border-strong);
+    transition: all 0.45s cubic-bezier(0.77, 0, 0.175, 1);
+    color: var(--color-chrome);
+}
+
+.download-button .docs__icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    opacity: 0.85;
+}
+
+.download-button:hover {
+    box-shadow: var(--shadow);
+}
+
+.download-button .download {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 92%;
+    margin: 0 auto;
+    z-index: -1;
+    border-radius: var(--radius);
+    transform: translateY(0%);
+    background-color: var(--color-accent);
+    border: 1px solid var(--color-accent-hover);
+    transition: all 0.45s cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+.download-button .download svg {
+    width: 20px;
+    height: 20px;
+    stroke: #fff;
+}
+
+.download-button:hover .download {
+    transform: translateY(100%);
+}
+
+.download-button .download svg polyline,
+.download-button .download svg line {
+    animation: download-arrow-bounce 1s infinite;
+}
+
+@keyframes download-arrow-bounce {
+    0% {
+        transform: translateY(0%);
+    }
+
+    50% {
+        transform: translateY(15%);
+    }
+
+    100% {
+        transform: translateY(0%);
+    }
+}
+
+.download-button:focus-visible {
+    outline: 2px solid var(--color-chrome);
+    outline-offset: 3px;
+}

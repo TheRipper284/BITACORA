@@ -1,0 +1,120 @@
+body.login-page {
+    background: var(--color-bg);
+    background-image: radial-gradient(
+        ellipse 100% 60% at 50% 0%,
+        rgba(187, 10, 48, 0.12),
+        transparent 50%
+    );
+}
+
+body.login-page .page--centered {
+    max-width: none;
+    width: 100%;
+    align-items: center;
+}
+
+body.login-page .flash-messages {
+    width: 100%;
+    max-width: 400px;
+}
+
+.login-container {
+    width: 100%;
+    max-width: 380px;
+    background: var(--color-surface);
+    border-radius: var(--radius-lg);
+    padding: var(--space-2xl) var(--space-xl);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-lg);
+    margin: var(--space-lg);
+    position: relative;
+    overflow: hidden;
+}
+
+.login-container::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--color-accent);
+}
+
+.login-heading {
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.85rem;
+    letter-spacing: var(--letter-wide);
+    text-transform: uppercase;
+    color: var(--color-text);
+    margin: 0;
+}
+
+.login-subheading {
+    text-align: center;
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+    margin: var(--space-sm) 0 0;
+}
+
+.login-form {
+    margin-top: var(--space-xl);
+}
+
+.login-form .login-input {
+    width: 100%;
+    background: var(--color-surface-elevated);
+    border: 1px solid var(--color-border);
+    padding: 0.85rem 1rem;
+    border-radius: var(--radius);
+    margin-top: var(--space-md);
+    font: inherit;
+    color: var(--color-text);
+    transition:
+        border-color var(--transition-fast),
+        box-shadow var(--transition-fast);
+}
+
+.login-form .login-input::placeholder {
+    color: var(--color-text-dim);
+}
+
+.login-form .login-input:focus {
+    outline: none;
+    border-color: var(--color-chrome-dark);
+    box-shadow: 0 0 0 3px var(--color-accent-muted);
+}
+
+.login-button {
+    display: block;
+    width: 100%;
+    font-weight: 600;
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: var(--color-accent);
+    color: #fff;
+    padding: 0.95rem 1rem;
+    margin: var(--space-xl) auto 0;
+    border-radius: var(--radius);
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    transition:
+        background var(--transition-fast),
+        transform var(--transition-fast);
+}
+
+.login-button:hover {
+    background: var(--color-accent-hover);
+}
+
+.login-button:active {
+    transform: scale(0.98);
+}
+
+.login-button:focus-visible {
+    outline: 2px solid var(--color-chrome);
+    outline-offset: 2px;
+}

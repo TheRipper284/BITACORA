@@ -1,95 +1,112 @@
-{% extends 'base.html' %}
-
-{% block title %}
-Administración
-{% endblock %}
-
-{% block content %}
-
-<h1>Administración</h1>
-
-<h2>
-    Bienvenido, {{ usuario.nombre }}
-</h2>
-
-<p>
-    Rol: {{ usuario.rol }}
-</p>
-
-<h3>
-    Opciones administrativas
-</h3>
-
-<ul>
-    <li>
-        <a href="{{ url_for('bitacora.consultar') }}">
-            Consultar bitácora
-        </a>
-    </li>
-
-    <li>
-        <a href="{{ url_for('admin.auditores')}}">
-            Administrar auditores
-        </a>
-    </li>
-
-    <li>
-        <strong>Descargar reporte mensual</strong>
-
-        <form
-            method="GET"
-            action="{{ url_for('reportes.exportar') }}"
-        >
-            <label for="mes">
-                Mes:
-            </label>
-
-            <select name="mes" id="mes" required>
-                <option value="1">Enero</option>
-                <option value="2">Febrero</option>
-                <option value="3">Marzo</option>
-                <option value="4">Abril</option>
-                <option value="5">Mayo</option>
-                <option value="6">Junio</option>
-                <option value="7">Julio</option>
-                <option value="8">Agosto</option>
-                <option value="9">Septiembre</option>
-                <option value="10">Octubre</option>
-                <option value="11">Noviembre</option>
-                <option value="12">Diciembre</option>
-            </select>
-
-            <label for="año">
-                Año:
-            </label>
-
-            <input
-                type="number"
-                name="año"
-                id="año"
-                min="2000"
-                max="2100"
-                required
-            >
-
-            <button type="submit">
-                Descargar Excel
-            </button>
-        </form>
-    </li>
-</ul>
-
-<br>
-
-<a href="{{ url_for('bitacora.index') }}">
-    Regresar a bitácora
-</a>
-
-<br>
-<br>
-
-<a href="{{ url_for('auth.logout') }}">
-    Cerrar sesión
-</a>
-
-{% endblock %}
+{% extends 'base.html' %}
+
+{% block title %}
+Administración
+{% endblock %}
+
+{% block content %}
+
+<header class="page-header">
+    <h1>Administración</h1>
+    <h2>Bienvenido, {{ usuario.nombre }}</h2>
+    <p>Rol: {{ usuario.rol }}</p>
+</header>
+
+<h3>Opciones administrativas</h3>
+
+<ul class="nav-links">
+    <li>
+        <a href="{{ url_for('bitacora.consultar') }}">
+            Consultar bitácora
+        </a>
+    </li>
+
+    <li>
+        <a href="{{ url_for('admin.auditores')}}">
+            Administrar auditores
+        </a>
+    </li>
+
+    <li>
+        <strong>Descargar reporte mensual</strong>
+
+        <form
+            method="GET"
+            action="{{ url_for('reportes.exportar') }}"
+            class="report-export-form"
+        >
+            <div class="form-row">
+                <div class="form-field">
+                    <label for="mes">Mes</label>
+                    <select name="mes" id="mes" required>
+                        <option value="1">Enero</option>
+                        <option value="2">Febrero</option>
+                        <option value="3">Marzo</option>
+                        <option value="4">Abril</option>
+                        <option value="5">Mayo</option>
+                        <option value="6">Junio</option>
+                        <option value="7">Julio</option>
+                        <option value="8">Agosto</option>
+                        <option value="9">Septiembre</option>
+                        <option value="10">Octubre</option>
+                        <option value="11">Noviembre</option>
+                        <option value="12">Diciembre</option>
+                    </select>
+                </div>
+
+                <div class="form-field">
+                    <label for="año">Año</label>
+                    <input
+                        type="number"
+                        name="año"
+                        id="año"
+                        min="2000"
+                        max="2100"
+                        required
+                    >
+                </div>
+            </div>
+
+            <button type="submit" class="download-button">
+                <div class="docs">
+                    <span>Descargar Excel</span>
+                    <svg
+                        class="docs__icon"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        aria-hidden="true"
+                    >
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="16" y1="13" x2="8" y2="13"/>
+                        <line x1="16" y1="17" x2="8" y2="17"/>
+                    </svg>
+                </div>
+                <div class="download" aria-hidden="true">
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2.5"
+                    >
+                        <polyline points="7 10 12 15 17 10"/>
+                        <line x1="12" y1="15" x2="12" y2="3"/>
+                    </svg>
+                </div>
+            </button>
+        </form>
+    </li>
+</ul>
+
+<div class="page-actions">
+    <a href="{{ url_for('bitacora.index') }}" class="action-link">
+        Regresar a bitácora
+    </a>
+    <a href="{{ url_for('auth.logout') }}" class="action-link action-link--ghost">
+        Cerrar sesión
+    </a>
+</div>
+
+{% endblock %}

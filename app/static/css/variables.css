@@ -1,0 +1,67 @@
+:root {
+    /* Paleta inspirada en identidad premium automotriz (cliente AUDI) */
+    --color-bg: #0a0a0a;
+    --color-bg-subtle: #111111;
+    --color-surface: #141414;
+    --color-surface-elevated: #1c1c1c;
+    --color-border: #2e2e2e;
+    --color-border-strong: #454545;
+
+    --color-text: #f2f2f2;
+    --color-text-muted: #9a9a9a;
+    --color-text-dim: #6b6b6b;
+
+    --color-accent: #bb0a30;
+    --color-accent-hover: #d4143a;
+    --color-accent-muted: rgba(187, 10, 48, 0.15);
+
+    --color-chrome: #c8c8c8;
+    --color-chrome-dark: #7a7a7a;
+
+    --color-primary: #e8e8e8;
+    --color-primary-hover: #ffffff;
+    --color-link: #d4d4d4;
+    --color-link-hover: #ffffff;
+
+    --color-danger: #bb0a30;
+    --color-danger-hover: #9a0828;
+
+    --color-success-bg: rgba(16, 185, 129, 0.12);
+    --color-success-text: #6ee7b7;
+    --color-success-border: rgba(16, 185, 129, 0.35);
+
+    --color-error-bg: rgba(187, 10, 48, 0.12);
+    --color-error-text: #fca5a5;
+    --color-error-border: rgba(187, 10, 48, 0.4);
+
+    --color-warning-bg: rgba(245, 158, 11, 0.12);
+    --color-warning-text: #fcd34d;
+    --color-warning-border: rgba(245, 158, 11, 0.35);
+
+    --radius-sm: 4px;
+    --radius: 6px;
+    --radius-lg: 10px;
+
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow: 0 4px 24px rgba(0, 0, 0, 0.45);
+    --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.55);
+
+    --font-sans: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+    --font-display: "Inter", var(--font-sans);
+    --letter-tight: -0.02em;
+    --letter-wide: 0.12em;
+
+    --space-xs: 0.25rem;
+    --space-sm: 0.5rem;
+    --space-md: 1rem;
+    --space-lg: 1.5rem;
+    --space-xl: 2rem;
+    --space-2xl: 3rem;
+
+    --max-width: 960px;
+    --max-width-wide: 1100px;
+
+    --header-height: 3.25rem;
+    --transition-fast: 0.15s ease;
+    --transition-base: 0.25s ease;
+}

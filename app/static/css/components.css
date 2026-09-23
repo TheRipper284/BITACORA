@@ -1,0 +1,206 @@
+.flash-messages {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 var(--space-lg);
+}
+
+.flash {
+    padding: var(--space-sm) var(--space-md);
+    border-radius: var(--radius);
+    margin-bottom: var(--space-sm);
+    border: 1px solid transparent;
+    font-size: 0.9rem;
+}
+
+.flash--success {
+    background: var(--color-success-bg);
+    color: var(--color-success-text);
+    border-color: var(--color-success-border);
+}
+
+.flash--error {
+    background: var(--color-error-bg);
+    color: var(--color-error-text);
+    border-color: var(--color-error-border);
+}
+
+.flash--warning {
+    background: var(--color-warning-bg);
+    color: var(--color-warning-text);
+    border-color: var(--color-warning-border);
+}
+
+.card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    padding: var(--space-lg);
+}
+
+.form-field {
+    margin-bottom: var(--space-md);
+}
+
+.form-field label {
+    display: block;
+    font-weight: 500;
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-xs);
+}
+
+.form-field input[type="text"],
+.form-field input[type="password"],
+.form-field input[type="date"],
+.form-field input[type="time"],
+.form-field input[type="number"],
+.form-field select,
+.form-field textarea {
+    width: 100%;
+    max-width: 100%;
+    padding: 0.65rem 0.85rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    font: inherit;
+    color: var(--color-text);
+    background: var(--color-surface-elevated);
+    transition:
+        border-color var(--transition-fast),
+        box-shadow var(--transition-fast);
+}
+
+.form-field input:focus,
+.form-field select:focus,
+.form-field textarea:focus {
+    outline: none;
+    border-color: var(--color-chrome-dark);
+    box-shadow: 0 0 0 3px var(--color-accent-muted);
+}
+
+.form-field select:disabled {
+    background: var(--color-bg-subtle);
+    color: var(--color-text-dim);
+    cursor: not-allowed;
+}
+
+.form-hint {
+    font-size: 0.85rem;
+    color: var(--color-text-dim);
+    margin-top: var(--space-xs);
+}
+
+.form-inline {
+    display: inline;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    font-size: 0.875rem;
+}
+
+.data-table th,
+.data-table td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--color-border);
+    vertical-align: middle;
+}
+
+.data-table th {
+    background: var(--color-surface-elevated);
+    font-weight: 600;
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+}
+
+.data-table td {
+    color: var(--color-chrome);
+}
+
+.data-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.data-table tbody tr {
+    transition: background var(--transition-fast);
+}
+
+.data-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.badge {
+    display: inline-block;
+    padding: 0.2rem 0.55rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.badge--active {
+    background: var(--color-success-bg);
+    color: var(--color-success-text);
+    border: 1px solid var(--color-success-border);
+}
+
+.badge--inactive {
+    background: var(--color-bg-subtle);
+    color: var(--color-text-dim);
+    border: 1px solid var(--color-border);
+}
+
+.filters-grid {
+    display: grid;
+    gap: var(--space-md);
+}
+
+.table-section {
+    margin-top: var(--space-xl);
+}
+
+.form-panel + .data-table,
+.form-panel + .table-section {
+    margin-top: var(--space-xl);
+}
+
+.table-section h2 {
+    margin-bottom: var(--space-md);
+}
+
+.empty-state {
+    padding: var(--space-xl);
+    text-align: center;
+    color: var(--color-text-dim);
+    background: var(--color-surface);
+    border: 1px dashed var(--color-border);
+    border-radius: var(--radius-lg);
+}
+
+.error-page {
+    max-width: 28rem;
+    margin: var(--space-xl) auto;
+    text-align: center;
+}
+
+.error-page .action-link {
+    margin-top: var(--space-md);
+}
+
+@media (min-width: 640px) {
+    .filters-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}

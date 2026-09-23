@@ -1,20 +1,16 @@
-{% extends 'base.html' %}
-
-{% block title %}
-Acceso denegado
-{% endblock %}
-
-{% block content %}
-<h1>403</h1>
-
-<h2>Acceso denegado</h2>
-
-<p>
-    No tienes permiso para acceder a esta sección...
-</p>
-
-<a href="{{ url_for('bitacora.index') }}">
-    Regresar a la bitácora
-</a>
-
-{% endblock %}
+{% extends 'base.html' %}
+
+{% block title %}
+Acceso denegado
+{% endblock %}
+
+{% block content %}
+<div class="card error-page">
+    <h1>403</h1>
+    <h2>Acceso denegado</h2>
+    <p>No tienes permiso para acceder a esta sección.</p>
+    <a href="{{ url_for('bitacora.index') }}" class="action-link">
+        Regresar a la bitácora
+    </a>
+</div>
+{% endblock %}

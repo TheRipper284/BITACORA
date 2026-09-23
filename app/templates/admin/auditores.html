@@ -4,17 +4,24 @@
     Administrar auditores
 {% endblock %}
 
+{% block body_class %}form-page{% endblock %}
+{% block page_class %}page--wide{% endblock %}
+
 {% block content %}
 
-<h1>Administrar auditores</h1>
+<header class="page-header">
+    <h1>Administrar auditores</h1>
+</header>
 
-<hr>
-
-<h2>Agregar auditor</h2>
+<div class="form-panel">
+    <h2 class="form-panel__heading">
+        Agregar auditor
+    </h2>
 
 <form
     method="POST"
     action="{{ url_for('admin.agregar_auditor') }}"
+    class="form-panel__form"
 >
 
     <input
@@ -94,17 +101,17 @@
 
     <br>
 
-    <button type="submit">
+    <button type="submit" class="form-panel__submit">
         Agregar auditor
     </button>
 
 </form>
-
-<hr>
+</div>
 
 <h2>Auditores registrados</h2>
 
-<table border="1">
+<section class="table-section">
+<table class="data-table">
 
     <thead>
 
@@ -155,9 +162,9 @@
                 <td>
 
                     {% if auditor.activo %}
-                        Activo
+                        <span class="badge badge--active">Activo</span>
                     {% else %}
-                        Inactivo
+                        <span class="badge badge--inactive">Inactivo</span>
                     {% endif %}
 
                 </td>
@@ -180,8 +187,13 @@
                                 value="{{ csrf_token() }}"
                             >
 
-                            <button type="submit">
-                                Desactivar
+                            <button
+                                type="submit"
+                                class="btn-gold btn-gold--danger btn-gold--compact"
+                            >
+                                <span class="btn-gold__label">
+                                    Desactivar
+                                </span>
                             </button>
 
                         </form>
@@ -211,138 +223,18 @@
     </tbody>
 
 </table>
+</section>
 
-<br>
-
-<a
-    href="{{ url_for('admin.index') }}"
->
-    Regresar a administración
-</a>
-
-
-<script>
-
-    const naveSelect =
-        document.getElementById(
-            "nave_id"
-        );
-
-    const areaSelect =
-        document.getElementById(
-            "area_id"
-        );
+<div class="page-actions">
+    <a href="{{ url_for('admin.index') }}" class="action-link">
+        Regresar a administración
+    </a>
+</div>
 
 
-    naveSelect.addEventListener(
-        "change",
-        async function() {
+{% endblock %}
 
-            const naveId =
-                this.value;
-
-
-            areaSelect.innerHTML = "";
-
-            areaSelect.disabled =
-                true;
-
-
-            if (!naveId) {
-
-                const option =
-                    document.createElement(
-                        "option"
-                    );
-
-                option.value = "";
-
-                option.textContent =
-                    "Selecciona primero una nave";
-
-                areaSelect.appendChild(
-                    option
-                );
-
-                return;
-            }
-
-
-            try {
-
-                const response =
-                    await fetch(
-                        `/bitacora/api/areas/${naveId}`
-                    );
-
-
-                if (!response.ok) {
-
-                    throw new Error(
-                        "Error al cargar áreas"
-                    );
-                }
-
-
-                const areas =
-                    await response.json();
-
-
-                const defaultOption =
-                    document.createElement(
-                        "option"
-                    );
-
-                defaultOption.value = "";
-
-                defaultOption.textContent =
-                    "Seleccionar área";
-
-                areaSelect.appendChild(
-                    defaultOption
-                );
-
-
-                areas.forEach(
-                    area => {
-
-                        const option =
-                            document.createElement(
-                                "option"
-                            );
-
-                        option.value =
-                            area.id;
-
-                        option.textContent =
-                            area.nombre;
-
-                        areaSelect.appendChild(
-                            option
-                        );
-
-                    }
-                );
-
-
-                areaSelect.disabled =
-                    false;
-
-
-            } catch (error) {
-
-                console.error(
-                    error
-                );
-
-                alert(
-                    "No fue posible cargar las áreas."
-                );
-            }
-
-        }
-    );
-
-</script>
-
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/nave-area.js') }}"></script>
+<script src="{{ url_for('static', filename='js/admin-auditores.js') }}"></script>
 {% endblock %}

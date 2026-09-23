@@ -4,11 +4,17 @@
     Registrar entrada
 {% endblock %}
 
+{% block body_class %}form-page{% endblock %}
+{% block page_class %}page--wide{% endblock %}
+
 {% block content %}
 
-<h1>Registrar entrada de bitácora</h1>
+<div class="form-panel form-panel--wide">
+    <h1 class="form-panel__title">
+        Registrar entrada de bitácora
+    </h1>
 
-<form method="POST">
+<form method="POST" class="form-panel__form">
 
     <input
         type="hidden"
@@ -16,7 +22,7 @@
         value="{{ csrf_token() }}"
     >
 
-    <h2>Datos de acceso</h2>
+    <h2 class="form-panel__section">Datos de acceso</h2>
 
     <div>
         <label for="fecha">
@@ -95,7 +101,7 @@
 
     <br>
 
-    <h2>Ubicación</h2>
+    <h2 class="form-panel__section">Ubicación</h2>
 
     <div>
         <label for="nave_id">
@@ -170,7 +176,7 @@
 
     <br>
 
-    <h2>Requerimientos</h2>
+    <h2 class="form-panel__section">Requerimientos</h2>
 
     <div>
         <label for="codigo_requerimiento">
@@ -217,7 +223,7 @@
 
     <br>
 
-    <h2>Personal</h2>
+    <h2 class="form-panel__section">Personal</h2>
 
         <div>
             <label for="tipo_personal">
@@ -307,262 +313,20 @@
 
     <br>
 
-    <button type="submit">
-        Registrar Entrada
+    <button type="submit" class="form-panel__submit">
+        Registrar entrada
     </button>
 
 </form>
-
-<br>
+</div>
 
 <a href="{{ url_for('bitacora.index') }}">
     Regresar
 </a>
 
-<script>
-
-    const naveSelect =
-        document.getElementById("nave_id");
-
-    const areaSelect =
-        document.getElementById("area_id");
-
-    const auditorSelect =
-        document.getElementById("auditor_id");
-
-
-    async function cargarAuditores() {
-
-        const naveId =
-            naveSelect.value;
-
-        const areaId =
-            areaSelect.value;
-
-        auditorSelect.innerHTML = "";
-
-        auditorSelect.disabled = true;
-
-        if (!naveId || !areaId) {
-
-            const option =
-                document.createElement("option");
-
-            option.value = "";
-
-            option.textContent =
-                "Selecciona nave y área";
-
-            auditorSelect.appendChild(
-                option
-            );
-
-            return;
-        }
-
-
-        try {
-
-            const response =
-                await fetch(
-                    `/bitacora/api/auditores/${naveId}/${areaId}`
-                );
-
-
-            if (!response.ok) {
-
-                throw new Error(
-                    "No fue posible cargar los auditores."
-                );
-            }
-
-
-            const auditores =
-                await response.json();
-
-
-            const defaultOption =
-                document.createElement("option");
-
-            defaultOption.value = "";
-
-            defaultOption.textContent =
-                "Seleccionar auditor";
-
-            auditorSelect.appendChild(
-                defaultOption
-            );
-
-
-            auditores.forEach(
-                auditor => {
-
-                    const option =
-                        document.createElement("option");
-
-                    option.value =
-                        auditor.id;
-
-                    option.textContent =
-                        auditor.nombre;
-
-                    auditorSelect.appendChild(
-                        option
-                    );
-                }
-            );
-
-
-            auditorSelect.disabled =
-                false;
-
-
-            if (auditores.length === 0) {
-
-                auditorSelect.innerHTML = "";
-
-                const option =
-                    document.createElement("option");
-
-                option.value = "";
-
-                option.textContent =
-                    "No hay auditores asignados";
-
-                auditorSelect.appendChild(
-                    option
-                );
-
-                auditorSelect.disabled =
-                    true;
-            }
-
-
-        } catch (error) {
-
-            console.error(error);
-
-            const option =
-                document.createElement("option");
-
-            option.value = "";
-
-            option.textContent =
-                "Error al cargar auditores";
-
-            auditorSelect.appendChild(
-                option
-            );
-        }
-    }
-
-
-    naveSelect.addEventListener(
-        "change",
-        async function() {
-
-            const naveId =
-                this.value;
-
-            areaSelect.innerHTML = "";
-
-            areaSelect.disabled = true;
-
-            auditorSelect.innerHTML = "";
-
-            auditorSelect.disabled = true;
-
-
-            if (!naveId) {
-
-                const option =
-                    document.createElement("option");
-
-                option.value = "";
-
-                option.textContent =
-                    "Selecciona primero una nave";
-
-                areaSelect.appendChild(
-                    option
-                );
-
-                return;
-            }
-
-
-            try {
-
-                const response =
-                    await fetch(
-                        `/bitacora/api/areas/${naveId}`
-                    );
-
-
-                if (!response.ok) {
-
-                    throw new Error(
-                        "No fue posible cargar las áreas."
-                    );
-                }
-
-
-                const areas =
-                    await response.json();
-
-
-                const defaultOption =
-                    document.createElement("option");
-
-                defaultOption.value = "";
-
-                defaultOption.textContent =
-                    "Seleccionar área";
-
-                areaSelect.appendChild(
-                    defaultOption
-                );
-
-
-                areas.forEach(
-                    area => {
-
-                        const option =
-                            document.createElement("option");
-
-                        option.value =
-                            area.id;
-
-                        option.textContent =
-                            area.nombre;
-
-                        areaSelect.appendChild(
-                            option
-                        );
-                    }
-                );
-
-
-                areaSelect.disabled =
-                    false;
-
-            } catch (error) {
-
-                console.error(error);
-
-                alert(
-                    "No fue posible cargar las áreas."
-                );
-            }
-        }
-    );
-
-
-    areaSelect.addEventListener(
-        "change",
-        cargarAuditores
-    );
-
-</script>
-
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/nave-area.js') }}"></script>
+<script src="{{ url_for('static', filename='js/registrar.js') }}"></script>
 {% endblock %}
