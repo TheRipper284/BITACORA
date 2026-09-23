@@ -205,9 +205,9 @@
 
             <input
                 type="text"
-                name="personal"
-                value="{{ request.args.get('personal', '') }}"
-                placeholder="Buscar personal"
+                name="nombre"
+                value="{{ request.args.get('nombre', '') }}"
+                placeholder="Buscar nombre"
             >
         </div>
 
@@ -404,7 +404,7 @@
                 <!-- ========================================= -->
 
                 <td>
-                        {{ registro.personal }}
+                    {{ registro.tipo_personal }}: {{ registro.nombre }}                
                 </td>
 
                 <!-- ========================================= -->
@@ -477,7 +477,7 @@
             area_id=request.args.get('area_id'),
             tipo_id=request.args.get('tipo_id'),
             codigo=request.args.get('codigo'),
-            personal=request.args.get('personal'),
+            nombre=request.args.get('nombre'),
             auditor_id=request.args.get('auditor_id')
         ) }}"
     >
@@ -508,7 +508,7 @@ de
             area_id=request.args.get('area_id'),
             tipo_id=request.args.get('tipo_id'),
             codigo=request.args.get('codigo'),
-            personal=request.args.get('personal'),
+            nombre=request.args.get('nombre'),
             auditor_id=request.args.get('auditor_id')
         ) }}"
     >

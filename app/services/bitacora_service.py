@@ -1,5 +1,4 @@
 from datetime import datetime
-
 import re
 
 from app.extensions import db
@@ -99,11 +98,42 @@ def validar_area(area_id, nave_id):
 
 
 # ============================================================
+# VALIDAR AUDITOR
+# ============================================================
+
+def validar_auditor(
+    auditor_id,
+    nave_id,
+    area_id
+):
+
+    auditor = (
+        Auditor.query
+        .filter_by(
+            id=auditor_id,
+            nave_id=nave_id,
+            area_id=area_id,
+            activo=True
+        )
+        .first()
+    )
+
+    if not auditor:
+        raise ValueError(
+            "El auditor seleccionado no pertenece "
+            "a la nave y área seleccionadas."
+        )
+
+    return auditor
+
+
+# ============================================================
 # VALIDAR CATALOGOS
 # ============================================================
 
 def validar_catalogos(
     nave_id,
+    area_id,
     auditor_id
 ):
 
@@ -118,16 +148,16 @@ def validar_catalogos(
             "o está inactiva."
         )
 
-    auditor = db.session.get(
-        Auditor,
-        auditor_id
+    validar_area(
+        area_id=area_id,
+        nave_id=nave_id
     )
 
-    if not auditor or not auditor.activo:
-        raise ValueError(
-            "El auditor seleccionado no existe "
-            "o está inactivo."
-        )
+    auditor = validar_auditor(
+        auditor_id=auditor_id,
+        nave_id=nave_id,
+        area_id=area_id
+    )
 
     return nave, auditor
 
@@ -154,6 +184,10 @@ def crear_registro(
     comentario
 ):
 
+    # --------------------------------------------------------
+    # EMPRESA
+    # --------------------------------------------------------
+
     empresa = empresa.strip()
 
     if not empresa:
@@ -167,6 +201,10 @@ def crear_registro(
             "los 150 caracteres."
         )
 
+    # --------------------------------------------------------
+    # TIPO DE PERSONA
+    # --------------------------------------------------------
+
     tipo_personal = tipo_personal.strip()
 
     if tipo_personal not in (
@@ -174,8 +212,12 @@ def crear_registro(
         "Visitante"
     ):
         raise ValueError(
-            "El tipo de personal no es válido."
+            "El tipo de persona no es válido."
         )
+
+    # --------------------------------------------------------
+    # NOMBRE
+    # --------------------------------------------------------
 
     nombre = nombre.strip()
 
@@ -190,15 +232,25 @@ def crear_registro(
             "los 150 caracteres."
         )
 
+    # --------------------------------------------------------
+    # CODIGO
+    # --------------------------------------------------------
+
     codigo_requerimiento = (
         codigo_requerimiento
         .strip()
         .upper()
     )
 
-    tipo_requerimiento = obtener_tipo_requerimiento(
-        codigo_requerimiento
+    tipo_requerimiento = (
+        obtener_tipo_requerimiento(
+            codigo_requerimiento
+        )
     )
+
+    # --------------------------------------------------------
+    # CATALOGOS
+    # --------------------------------------------------------
 
     validar_catalogos(
         nave_id=nave_id,
@@ -206,9 +258,17 @@ def crear_registro(
         auditor_id=auditor_id
     )
 
+    # --------------------------------------------------------
+    # NUMERO
+    # --------------------------------------------------------
+
     numero = obtener_siguiente_numero(
         fecha
     )
+
+    # --------------------------------------------------------
+    # REGISTRO
+    # --------------------------------------------------------
 
     registro = RegistroBitacora(
 
@@ -265,185 +325,6 @@ def crear_registro(
 
     return registro
 
-    # --------------------------------------------------------
-    # VALIDAR EMPRESA
-    # --------------------------------------------------------
-
-    empresa = empresa.strip()
-
-    if not empresa:
-        raise ValueError(
-            "La empresa es obligatoria."
-        )
-
-    if len(empresa) > 150:
-        raise ValueError(
-            "La empresa no puede superar "
-            "los 150 caracteres."
-        )
-
-    # --------------------------------------------------------
-    # VALIDAR PERSONAL
-    # --------------------------------------------------------
-
-    personal = personal.strip()
-
-    if not personal:
-        raise ValueError(
-            "El personal es obligatorio."
-        )
-
-    if len(personal) > 150:
-        raise ValueError(
-            "El personal no puede superar "
-            "los 150 caracteres."
-        )
-
-    # --------------------------------------------------------
-    # VALIDAR TIPO Y CODIGO
-    # --------------------------------------------------------
-
-    codigo_requerimiento = (
-        codigo_requerimiento
-        .strip()
-        .upper()
-    )
-
-    tipo_requerimiento = obtener_tipo_requerimiento(
-        codigo_requerimiento
-    )
-
-    # --------------------------------------------------------
-    # VALIDAR CATALOGOS
-    # --------------------------------------------------------
-
-    def validar_catalogos(
-    nave_id,
-    area_id,
-    auditor_id
-    ):
-
-        nave = db.session.get(
-            Nave,
-            nave_id
-        )
-
-        if not nave or not nave.activo:
-            raise ValueError(
-                "La nave seleccionada no existe "
-                "o está inactiva."
-            )
-
-        area = (
-            Area.query
-            .filter_by(
-                id=area_id,
-                nave_id=nave_id,
-                activo=True
-            )
-            .first()
-        )
-
-        if not area:
-            raise ValueError(
-                "El área seleccionada no existe, "
-                "está inactiva o no pertenece a la nave."
-            )
-
-        auditor = (
-            Auditor.query
-            .filter_by(
-                id=auditor_id,
-                nave_id=nave_id,
-                area_id=area_id,
-                activo=True
-            )
-            .first()
-        )
-
-        if not auditor:
-            raise ValueError(
-                "El auditor seleccionado no pertenece "
-                "a la nave y área seleccionadas."
-            )
-
-        return nave, area, auditor
-
-    # --------------------------------------------------------
-    # VALIDAR AREA
-    # --------------------------------------------------------
-
-    validar_area(
-        area_id=area_id,
-        nave_id=nave_id
-    )
-
-    # --------------------------------------------------------
-    # OBTENER NUMERO
-    # --------------------------------------------------------
-
-    numero = obtener_siguiente_numero(
-        fecha
-    )
-
-    # --------------------------------------------------------
-    # CREAR REGISTRO
-    # --------------------------------------------------------
-
-    registro = RegistroBitacora(
-
-        numero=numero,
-
-        fecha=fecha,
-
-        hora_entrada=hora_entrada,
-
-        soporte=soporte,
-
-        empresa=empresa,
-
-        actividad=actividad,
-
-        nave_id=nave_id,
-
-        area_id=area_id,
-
-        bitacora_lectora=bitacora_lectora,
-
-        tipo_requerimiento_id=tipo_requerimiento.id,
-
-        codigo_requerimiento=codigo_requerimiento,
-
-        argonite_anexo1=argonite_anexo1,
-
-        personal=personal,
-
-        numero_registro=1,
-
-        auditor_id=auditor_id,
-
-        amonestacion=amonestacion,
-
-        comentario=comentario
-
-    )
-
-    try:
-
-        db.session.add(
-            registro
-        )
-
-        db.session.commit()
-
-    except Exception:
-
-        db.session.rollback()
-
-        raise
-
-    return registro
-
 
 # ============================================================
 # REGISTRAR SALIDA
@@ -459,7 +340,9 @@ def registrar_salida(registro):
 
     ahora = datetime.now()
 
-    registro.hora_salida = ahora.time()
+    registro.hora_salida = (
+        ahora.time()
+    )
 
     try:
 

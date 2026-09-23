@@ -235,19 +235,60 @@
 
     <br>
 
-        <div>
-            <label>Personal:</label>
+    <h2>Personal</h2>
 
-            <input
-                type="text"
-                name="personal"
-                value="{{ registro.personal }}"
-                maxlength="150"
-                required
+    <div>
+
+        <label for="tipo_personal">
+            Tipo
+        </label>
+
+        <select
+            name="tipo_personal"
+            id="tipo_personal"
+            required
+        >
+
+            <option
+                value="Usuario"
+                {% if registro.tipo_personal == "Usuario" %}
+                    selected
+                {% endif %}
             >
-        </div>
+                Usuario
+            </option>
+
+            <option
+                value="Visitante"
+                {% if registro.tipo_personal == "Visitante" %}
+                    selected
+                {% endif %}
+            >
+                Visitante
+            </option>
+
+        </select>
+
+    </div>
 
     <br>
+
+    <div>
+
+        <label for="nombre">
+            Nombre
+        </label>
+
+        <input
+            type="text"
+            name="nombre"
+            id="nombre"
+            value="{{ registro.nombre }}"
+            maxlength="150"
+            required
+        >
+
+    </div>
 
     <div>
         <label>Auditoría:</label>

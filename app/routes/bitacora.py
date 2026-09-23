@@ -91,28 +91,6 @@ def registrar():
         .all()
     )
 
-    areas = (
-        Area.query
-        .filter_by(
-            activo=True
-        )
-        .order_by(
-            Area.nombre
-        )
-        .all()
-    )
-
-    auditores = (
-        Auditor.query
-        .filter_by(
-            activo=True
-        )
-        .order_by(
-            Auditor.nombre
-        )
-        .all()
-    )
-
     if request.method == "POST":
 
         try:
@@ -135,8 +113,17 @@ def registrar():
                 request.form["area_id"]
             )
 
-            personal = (
-                request.form["personal"]
+            tipo_personal = (
+                request.form[
+                    "tipo_personal"
+                ]
+                .strip()
+            )
+
+            nombre = (
+                request.form[
+                    "nombre"
+                ]
                 .strip()
             )
 
@@ -189,7 +176,9 @@ def registrar():
 
                 argonite_anexo1=argonite,
 
-                personal=personal,
+                tipo_personal=tipo_personal,
+
+                nombre=nombre,
 
                 auditor_id=auditor_id,
 
@@ -241,11 +230,8 @@ def registrar():
 
     return render_template(
         "bitacora/registrar.html",
-        naves=naves,
-        areas=areas,
-        auditores=auditores
+        naves=naves
     )
-
 
 # ============================================================
 # API - AREAS POR NAVE
@@ -383,8 +369,8 @@ def consultar():
         ""
     ).strip()
 
-    personal = request.args.get(
-        "personal",
+    nombre = request.args.get(
+        "nombre",
         ""
     ).strip()
 
@@ -480,11 +466,11 @@ def consultar():
     # PERSONAL
     # --------------------------------------------------------
 
-    if personal:
+    if nombre:
 
         query = query.filter(
-            RegistroBitacora.personal.ilike(
-                f"%{personal}%"
+            RegistroBitacora.nombre.ilike(
+                f"%{nombre}%"
             )
         )
 
@@ -634,7 +620,6 @@ def detalle(registro_id):
 # ============================================================
 # EDITAR
 # ============================================================
-
 @bitacora_bp.route(
     "/editar/<int:registro_id>",
     methods=["GET", "POST"]
@@ -648,12 +633,10 @@ def editar(registro_id):
     )
 
     if registro is None:
-
         flash(
             "El registro no existe.",
             "danger"
         )
-
         return redirect(
             url_for(
                 "bitacora.consultar"
@@ -713,8 +696,11 @@ def editar(registro_id):
     # --------------------------------------------------------
 
     if request.method == "POST":
-
         try:
+
+            # ------------------------------------------------
+            # FECHA Y HORAS
+            # ------------------------------------------------
 
             fecha = datetime.strptime(
                 request.form["fecha"],
@@ -728,10 +714,7 @@ def editar(registro_id):
 
             hora_salida = None
 
-            if request.form.get(
-                "hora_salida"
-            ):
-
+            if request.form.get("hora_salida"):
                 hora_salida = datetime.strptime(
                     request.form["hora_salida"],
                     "%H:%M"
@@ -742,20 +725,16 @@ def editar(registro_id):
             # ------------------------------------------------
 
             empresa = (
-                request.form[
-                    "empresa"
-                ]
+                request.form["empresa"]
                 .strip()
             )
 
             if not empresa:
-
                 raise ValueError(
                     "La empresa es obligatoria."
                 )
 
             if len(empresa) > 150:
-
                 raise ValueError(
                     "La empresa no puede superar "
                     "los 150 caracteres."
@@ -765,24 +744,40 @@ def editar(registro_id):
             # PERSONAL
             # ------------------------------------------------
 
-            personal = (
-                request.form[
-                    "personal"
-                ]
+            tipo_personal = (
+                request.form.get(
+                    "tipo_personal",
+                    ""
+                )
                 .strip()
             )
 
-            if not personal:
+            nombre = (
+                request.form.get(
+                    "nombre",
+                    ""
+                )
+                .strip()
+            )
 
+            if tipo_personal not in (
+                "Usuario",
+                "Visitante"
+            ):
                 raise ValueError(
-                    "El personal es obligatorio."
+                    "El tipo de personal debe ser "
+                    "Usuario o Visitante."
                 )
 
-            if len(personal) > 150:
-
+            if not nombre:
                 raise ValueError(
-                    "El personal no puede superar "
-                    "los 150 caracteres."
+                    "El nombre del personal es obligatorio."
+                )
+
+            if len(nombre) > 150:
+                raise ValueError(
+                    "El nombre del personal no puede "
+                    "superar los 150 caracteres."
                 )
 
             # ------------------------------------------------
@@ -817,7 +812,6 @@ def editar(registro_id):
             )
 
             if nave is None or not nave.activo:
-
                 raise ValueError(
                     "La nave seleccionada no existe "
                     "o está inactiva."
@@ -833,19 +827,16 @@ def editar(registro_id):
             )
 
             if area is None:
-
                 raise ValueError(
                     "El área seleccionada no existe."
                 )
 
             if not area.activo:
-
                 raise ValueError(
                     "El área seleccionada está inactiva."
                 )
 
             if area.nave_id != nave_id:
-
                 raise ValueError(
                     "El área no pertenece "
                     "a la nave seleccionada."
@@ -861,14 +852,12 @@ def editar(registro_id):
             )
 
             if tipo is None:
-
                 raise ValueError(
                     "El tipo de requerimiento "
                     "no existe."
                 )
 
             if not tipo.activo:
-
                 raise ValueError(
                     "El tipo de requerimiento "
                     "está inactivo."
@@ -890,7 +879,6 @@ def editar(registro_id):
                 r"(CR|RR|IR)\d+",
                 codigo
             ):
-
                 raise ValueError(
                     "El código debe tener formato "
                     "CR/RR/IR seguido de números."
@@ -899,7 +887,6 @@ def editar(registro_id):
             tipo_codigo = codigo[:2]
 
             if tipo.codigo.upper() != tipo_codigo:
-
                 raise ValueError(
                     "El tipo de requerimiento "
                     "no corresponde al código."
@@ -918,10 +905,21 @@ def editar(registro_id):
                 auditor_obj is None
                 or not auditor_obj.activo
             ):
-
                 raise ValueError(
                     "El auditor seleccionado "
                     "no existe o está inactivo."
+                )
+
+            if auditor_obj.nave_id != nave_id:
+                raise ValueError(
+                    "El auditor no pertenece "
+                    "a la nave seleccionada."
+                )
+
+            if auditor_obj.area_id != area_id:
+                raise ValueError(
+                    "El auditor no pertenece "
+                    "al área seleccionada."
                 )
 
             # ------------------------------------------------
@@ -979,7 +977,11 @@ def editar(registro_id):
                 ) == "1"
             )
 
-            registro.personal = personal
+            registro.tipo_personal = (
+                tipo_personal
+            )
+
+            registro.nombre = nombre
 
             registro.auditor_id = (
                 auditor_id
@@ -1057,3 +1059,33 @@ def editar(registro_id):
         tipos=tipos,
         auditores=auditores
     )
+
+@bitacora_bp.route(
+    "/api/auditores/<int:nave_id>/<int:area_id>"
+)
+@login_required
+def obtener_auditores(
+    nave_id,
+    area_id
+):
+
+    auditores = (
+        Auditor.query
+        .filter_by(
+            nave_id=nave_id,
+            area_id=area_id,
+            activo=True
+        )
+        .order_by(
+            Auditor.nombre
+        )
+        .all()
+    )
+
+    return jsonify([
+        {
+            "id": auditor.id,
+            "nombre": auditor.nombre
+        }
+        for auditor in auditores
+    ])

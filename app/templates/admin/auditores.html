@@ -1,0 +1,348 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Administrar auditores
+{% endblock %}
+
+{% block content %}
+
+<h1>Administrar auditores</h1>
+
+<hr>
+
+<h2>Agregar auditor</h2>
+
+<form
+    method="POST"
+    action="{{ url_for('admin.agregar_auditor') }}"
+>
+
+    <input
+        type="hidden"
+        name="csrf_token"
+        value="{{ csrf_token() }}"
+    >
+
+    <div>
+
+        <label for="nombre">
+            Nombre
+        </label>
+
+        <input
+            type="text"
+            id="nombre"
+            name="nombre"
+            maxlength="150"
+            required
+        >
+
+    </div>
+
+    <br>
+
+    <div>
+
+        <label for="nave_id">
+            Nave
+        </label>
+
+        <select
+            id="nave_id"
+            name="nave_id"
+            required
+        >
+
+            <option value="">
+                Seleccionar nave
+            </option>
+
+            {% for nave in naves %}
+
+                <option value="{{ nave.id }}">
+                    {{ nave.codigo }}
+                </option>
+
+            {% endfor %}
+
+        </select>
+
+    </div>
+
+    <br>
+
+    <div>
+
+        <label for="area_id">
+            Área
+        </label>
+
+        <select
+            id="area_id"
+            name="area_id"
+            required
+            disabled
+        >
+
+            <option value="">
+                Selecciona primero una nave
+            </option>
+
+        </select>
+
+    </div>
+
+    <br>
+
+    <button type="submit">
+        Agregar auditor
+    </button>
+
+</form>
+
+<hr>
+
+<h2>Auditores registrados</h2>
+
+<table border="1">
+
+    <thead>
+
+        <tr>
+
+            <th>
+                Nombre
+            </th>
+
+            <th>
+                Nave
+            </th>
+
+            <th>
+                Área
+            </th>
+
+            <th>
+                Estado
+            </th>
+
+            <th>
+                Acción
+            </th>
+
+        </tr>
+
+    </thead>
+
+    <tbody>
+
+        {% for auditor in auditores %}
+
+            <tr>
+
+                <td>
+                    {{ auditor.nombre }}
+                </td>
+
+                <td>
+                    {{ auditor.nave.codigo }}
+                </td>
+
+                <td>
+                    {{ auditor.area.nombre }}
+                </td>
+
+                <td>
+
+                    {% if auditor.activo %}
+                        Activo
+                    {% else %}
+                        Inactivo
+                    {% endif %}
+
+                </td>
+
+                <td>
+
+                    {% if auditor.activo %}
+
+                        <form
+                            method="POST"
+                            action="{{ url_for(
+                                'admin.eliminar_auditor',
+                                auditor_id=auditor.id
+                            ) }}"
+                        >
+
+                            <input
+                                type="hidden"
+                                name="csrf_token"
+                                value="{{ csrf_token() }}"
+                            >
+
+                            <button type="submit">
+                                Desactivar
+                            </button>
+
+                        </form>
+
+                    {% else %}
+
+                        Inactivo
+
+                    {% endif %}
+
+                </td>
+
+            </tr>
+
+        {% else %}
+
+            <tr>
+
+                <td colspan="5">
+                    No hay auditores registrados.
+                </td>
+
+            </tr>
+
+        {% endfor %}
+
+    </tbody>
+
+</table>
+
+<br>
+
+<a
+    href="{{ url_for('admin.index') }}"
+>
+    Regresar a administración
+</a>
+
+
+<script>
+
+    const naveSelect =
+        document.getElementById(
+            "nave_id"
+        );
+
+    const areaSelect =
+        document.getElementById(
+            "area_id"
+        );
+
+
+    naveSelect.addEventListener(
+        "change",
+        async function() {
+
+            const naveId =
+                this.value;
+
+
+            areaSelect.innerHTML = "";
+
+            areaSelect.disabled =
+                true;
+
+
+            if (!naveId) {
+
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+                option.value = "";
+
+                option.textContent =
+                    "Selecciona primero una nave";
+
+                areaSelect.appendChild(
+                    option
+                );
+
+                return;
+            }
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `/bitacora/api/areas/${naveId}`
+                    );
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        "Error al cargar áreas"
+                    );
+                }
+
+
+                const areas =
+                    await response.json();
+
+
+                const defaultOption =
+                    document.createElement(
+                        "option"
+                    );
+
+                defaultOption.value = "";
+
+                defaultOption.textContent =
+                    "Seleccionar área";
+
+                areaSelect.appendChild(
+                    defaultOption
+                );
+
+
+                areas.forEach(
+                    area => {
+
+                        const option =
+                            document.createElement(
+                                "option"
+                            );
+
+                        option.value =
+                            area.id;
+
+                        option.textContent =
+                            area.nombre;
+
+                        areaSelect.appendChild(
+                            option
+                        );
+
+                    }
+                );
+
+
+                areaSelect.disabled =
+                    false;
+
+
+            } catch (error) {
+
+                console.error(
+                    error
+                );
+
+                alert(
+                    "No fue posible cargar las áreas."
+                );
+            }
+
+        }
+    );
+
+</script>
+
+{% endblock %}
