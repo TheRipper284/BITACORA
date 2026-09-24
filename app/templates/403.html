@@ -1,16 +1,49 @@
-{% extends 'base.html' %}
-
-{% block title %}
-Acceso denegado
-{% endblock %}
-
-{% block content %}
-<div class="card error-page">
-    <h1>403</h1>
-    <h2>Acceso denegado</h2>
-    <p>No tienes permiso para acceder a esta sección.</p>
-    <a href="{{ url_for('bitacora.index') }}" class="action-link">
-        Regresar a la bitácora
-    </a>
-</div>
-{% endblock %}
+{% extends 'base.html' %}
+
+{% block title %}
+Acceso denegado
+{% endblock %}
+
+{% block page_class %}page--wide{% endblock %}
+
+{% block extra_css %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/403.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<section class="error-403">
+
+```
+<div class="error-403__content">
+
+    <span class="error-403__code">403</span>
+
+    <div class="error-403__divider"></div>
+
+    <h1 class="error-403__title">
+        Acceso denegado
+    </h1>
+
+    <p class="error-403__message">
+        No tienes permiso para acceder a esta sección.
+    </p>
+
+    <p class="error-403__hint">
+        Regresa al inicio para continuar utilizando BITACORA.
+    </p>
+
+    <a
+        href="{{ url_for('bitacora.index') }}"
+        class="error-403__button"
+    >
+        Volver al inicio
+    </a>
+
+</div>
+```
+
+</section>
+
+{% endblock %}

@@ -1,9 +1,9 @@
 /* ============================================================
-ERROR 404
-Página no encontrada
+ERROR 403
+Acceso denegado
 ============================================================ */
 
-.error-404 {
+.error-403 {
 width: 100%;
 min-height: calc(100vh - var(--header-height));
 
@@ -38,7 +38,7 @@ position: relative;
 
 /* Línea decorativa superior */
 
-.error-404::before {
+.error-403::before {
 content: "";
 
 
@@ -64,7 +64,7 @@ opacity: 0.7;
 
 /* Contenedor principal */
 
-.error-404__content {
+.error-403__content {
 width: 100%;
 max-width: 680px;
 
@@ -79,10 +79,11 @@ z-index: 1;
 
 }
 
-/* Número 404 */
+/* Número 403 */
 
-.error-404__code {
+.error-403__code {
 display: block;
+
 
 font-family: var(--font-display);
 
@@ -105,7 +106,7 @@ text-shadow:
 
 /* Detalle rojo */
 
-.error-404__divider {
+.error-403__divider {
 width: 70px;
 height: 3px;
 
@@ -124,7 +125,7 @@ box-shadow:
 
 /* Título */
 
-.error-404__title {
+.error-403__title {
 margin: 0 0 var(--space-md);
 
 
@@ -143,9 +144,9 @@ color: var(--color-text);
 
 }
 
-/* Mensaje principal */
+/* Mensaje */
 
-.error-404__message {
+.error-403__message {
 max-width: 560px;
 
 
@@ -164,7 +165,7 @@ color: var(--color-text-muted);
 
 /* Instrucción */
 
-.error-404__hint {
+.error-403__hint {
 margin: var(--space-lg) 0 var(--space-xl);
 
 
@@ -181,7 +182,7 @@ color: var(--color-text-dim);
 
 /* Botón */
 
-.error-404__button {
+.error-403__button {
 display: inline-flex;
 
 
@@ -223,7 +224,7 @@ transition:
 
 }
 
-.error-404__button:hover {
+.error-403__button:hover {
 background: var(--color-accent-hover);
 
 
@@ -241,7 +242,7 @@ transform: translateY(-2px);
 
 }
 
-.error-404__button:active {
+.error-403__button:active {
 transform: translateY(0);
 }
 
@@ -252,7 +253,7 @@ RESPONSIVE
 @media (max-width: 639px) {
 
 
-.error-404 {
+.error-403 {
     min-height: calc(100vh - var(--header-height));
 
     padding:
@@ -261,12 +262,12 @@ RESPONSIVE
 }
 
 
-.error-404__code {
+.error-403__code {
     font-size: clamp(6rem, 30vw, 9rem);
 }
 
 
-.error-404__divider {
+.error-403__divider {
     margin:
         var(--space-lg)
         0
@@ -274,17 +275,17 @@ RESPONSIVE
 }
 
 
-.error-404__title {
+.error-403__title {
     font-size: 1.6rem;
 }
 
 
-.error-404__message {
+.error-403__message {
     font-size: 0.95rem;
 }
 
 
-.error-404__hint {
+.error-403__hint {
     font-size: 0.8rem;
 
     margin:
@@ -294,7 +295,7 @@ RESPONSIVE
 }
 
 
-.error-404__button {
+.error-403__button {
     width: 100%;
     max-width: 260px;
 }
