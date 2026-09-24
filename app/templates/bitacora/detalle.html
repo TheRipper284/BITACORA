@@ -1,150 +1,144 @@
 {% extends "base.html" %}
 
+{% block title %}Detalle del registro{% endblock %}
+{% block body_class %}form-page{% endblock %}
+{% block page_class %}page--wide{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/detail.css') }}">
+{% endblock %}
+
 {% block content %}
 
-<h1>Detalle del registro</h1>
+<header class="page-header">
+    <h1>Detalle del registro</h1>
+    <p>No. {{ registro.numero }} · {{ registro.fecha }}</p>
+</header>
 
-<hr>
+<article class="detail-panel">
+    <div class="detail-panel__status">
+        {% if registro.hora_salida %}
+            <span class="badge badge--inactive">Con salida registrada</span>
+        {% else %}
+            <span class="badge badge--active">Dentro de planta</span>
+        {% endif %}
+    </div>
 
-<h2>Información general</h2>
+    <section class="detail-section">
+        <h2>Información general</h2>
+        <div class="detail-grid">
+            <div class="detail-item">
+                <span class="detail-item__label">Hora de entrada</span>
+                <span class="detail-item__value">{{ registro.hora_entrada }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-item__label">Hora de salida</span>
+                <span class="detail-item__value">
+                    {% if registro.hora_salida %}{{ registro.hora_salida }}{% else %}—{% endif %}
+                </span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-item__label">Soporte</span>
+                <span class="detail-item__value">{{ registro.soporte }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-item__label">Empresa</span>
+                <span class="detail-item__value">{{ registro.empresa }}</span>
+            </div>
+            <div class="detail-item detail-item--wide">
+                <span class="detail-item__label">Actividad</span>
+                <span class="detail-item__value">{{ registro.actividad }}</span>
+            </div>
+        </div>
+    </section>
 
-<p>
-    <strong>No.:</strong>
-    {{ registro.numero }}
-</p>
+    <section class="detail-section">
+        <h2>Ubicación</h2>
+        <div class="detail-grid">
+            <div class="detail-item">
+                <span class="detail-item__label">Nave</span>
+                <span class="detail-item__value">{{ registro.nave.codigo }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-item__label">Área</span>
+                <span class="detail-item__value">{{ registro.area.nombre }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-item__label">Bitácora lectora</span>
+                <span class="detail-item__value">{{ registro.bitacora_lectora }}</span>
+            </div>
+        </div>
+    </section>
 
-<p>
-    <strong>Fecha:</strong>
-    {{ registro.fecha }}
-</p>
+    <section class="detail-section">
+        <h2>Requerimiento</h2>
+        <div class="detail-grid">
+            <div class="detail-item">
+                <span class="detail-item__label">Tipo</span>
+                <span class="detail-item__value">{{ registro.tipo_requerimiento.nombre }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-item__label">Código</span>
+                <span class="detail-item__value">{{ registro.codigo_requerimiento }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-item__label">Argonite / Anexo 1</span>
+                <span class="detail-item__value">{% if registro.argonite_anexo1 %}Sí{% else %}No{% endif %}</span>
+            </div>
+        </div>
+    </section>
 
-<p>
-    <strong>Hora de entrada:</strong>
-    {{ registro.hora_entrada }}
-</p>
+    <section class="detail-section">
+        <h2>Personal</h2>
+        <div class="detail-grid">
+            <div class="detail-item">
+                <span class="detail-item__label">Tipo</span>
+                <span class="detail-item__value">{{ registro.tipo_personal }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-item__label">Nombre</span>
+                <span class="detail-item__value">{{ registro.nombre }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-item__label">No. registro</span>
+                <span class="detail-item__value">{{ registro.numero_registro }}</span>
+            </div>
+        </div>
+    </section>
 
-<p>
-    <strong>Hora de salida:</strong>
+    <section class="detail-section">
+        <h2>Auditoría</h2>
+        <div class="detail-grid">
+            <div class="detail-item">
+                <span class="detail-item__label">Auditor</span>
+                <span class="detail-item__value">{{ registro.auditor.nombre }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-item__label">Amonestación</span>
+                <span class="detail-item__value">{{ registro.amonestacion }}</span>
+            </div>
+            <div class="detail-item detail-item--wide">
+                <span class="detail-item__label">Comentario</span>
+                <p class="detail-comment">
+                    {% if registro.comentario %}{{ registro.comentario }}{% else %}Sin comentario{% endif %}
+                </p>
+            </div>
+        </div>
+    </section>
+</article>
 
-    {% if registro.hora_salida %}
-        {{ registro.hora_salida }}
-    {% else %}
-        Dentro
-    {% endif %}
-</p>
-
-<p>
-    <strong>Soporte:</strong>
-    {{ registro.soporte }}
-</p>
-
-<p>
-    <strong>Empresa:</strong>
-    {{ registro.empresa }}
-</p>
-<p>
-    <strong>Actividad:</strong>
-    {{ registro.actividad }}
-</p>
-
-<hr>
-
-<h2>Ubicación</h2>
-
-<p>
-    <strong>Nave:</strong>
-    {{ registro.nave.codigo }}
-</p>
-
-<p>
-    <strong>Área:</strong>
-    {{ registro.area.nombre }}
-</p>
-
-<p>
-    <strong>Bitácora lectora:</strong>
-    {{ registro.bitacora_lectora }}
-</p>
-
-<hr>
-
-<h2>Requerimiento</h2>
-
-<p>
-    <strong>Tipo:</strong>
-    {{ registro.tipo_requerimiento.nombre }}
-</p>
-
-<p>
-    <strong>Código:</strong>
-    {{ registro.codigo_requerimiento }}
-</p>
-
-<p>
-    <strong>Argonite / Anexo 1:</strong>
-
-    {% if registro.argonite_anexo1 %}
-        SI
-    {% else %}
-        NO
-    {% endif %}
-</p>
-
-<hr>
-
-<h2>Personal</h2>
-
-<p>
-    <strong>Tipo:</strong>
-    {{ registro.tipo_personal }}
-
-    <br>
-
-    <strong>Nombre:</strong>
-    {{ registro.nombre }}
-</p>
-
-<p>
-    <strong>No. Registro:</strong>
-    {{ registro.numero_registro }}
-</p>
-
-<hr>
-
-<h2>Auditoría</h2>
-
-<p>
-    <strong>Auditoría:</strong>
-    {{ registro.auditor.nombre }}
-</p>
-
-<p>
-    <strong>Amonestación:</strong>
-    {{ registro.amonestacion }}
-</p>
-
-<p>
-    <strong>Comentario:</strong>
-</p>
-
-<p>
-    {% if registro.comentario %}
-        {{ registro.comentario }}
-    {% else %}
-        Sin comentario
-    {% endif %}
-</p>
-
-<hr>
-
-<a href="{{ url_for('bitacora.consultar') }}">
-    ← Regresar a consulta
-</a>
-
-{% if current_user.es_admin() %}
-    <a href="{{ url_for('bitacora.editar', registro_id=registro.id) }}">
-        Editar registro
+<div class="page-actions">
+    <a href="{{ url_for('bitacora.index') }}" class="action-link action-link--ghost">
+        Inicio
     </a>
-{% endif %}
+    <a href="{{ url_for('bitacora.consultar') }}" class="action-link">
+        Regresar a consulta
+    </a>
+    {% if current_user.es_admin() %}
+        <a href="{{ url_for('bitacora.editar', registro_id=registro.id) }}" class="action-link action-link--primary">
+            Editar registro
+        </a>
+    {% endif %}
+</div>
 
 {% endblock %}

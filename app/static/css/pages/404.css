@@ -1,0 +1,88 @@
+/* ======================
+   404 page
+   ======================= */
+
+.page_404 {
+    padding: 40px 0;
+    background: #fff;
+    font-family: "Arvo", serif;
+    border-radius: var(--radius-lg);
+    color: #1a1a1a;
+}
+
+.page_404 img {
+    width: 100%;
+}
+
+.page_404 .container {
+    max-width: 42rem;
+    margin: 0 auto;
+    padding: 0 var(--space-lg);
+}
+
+.page_404 .text-center {
+    text-align: center;
+}
+
+.four_zero_four_bg {
+    background-image: url(https://cdn.dribbble.com/users/285475/screenshots/2083086/dribbble_1.gif);
+    height: 400px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.four_zero_four_bg h1 {
+    font-size: 80px;
+    margin: 0;
+    line-height: 1;
+}
+
+.contant_box_404 {
+    margin-top: -50px;
+}
+
+.contant_box_404 .h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin: 0 0 var(--space-md);
+}
+
+.contant_box_404 p {
+    margin: 0 0 var(--space-md);
+    color: #444;
+}
+
+.link_404 {
+    color: #fff !important;
+    padding: 10px 20px;
+    background: #39ac31;
+    margin: 20px 0;
+    display: inline-block;
+    text-decoration: none;
+    border-radius: var(--radius);
+    font-family: var(--font-sans, "Inter", sans-serif);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.link_404:hover {
+    background: #2f9629;
+    text-decoration: none;
+}
+
+@media (max-width: 639px) {
+    .four_zero_four_bg {
+        height: 280px;
+    }
+
+    .four_zero_four_bg h1 {
+        font-size: 56px;
+    }
+
+    .contant_box_404 {
+        margin-top: -24px;
+    }
+}

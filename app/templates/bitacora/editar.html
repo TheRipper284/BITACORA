@@ -360,4 +360,16 @@
 </form>
 </div>
 
+<div class="page-actions">
+    <a
+        href="{{ url_for('bitacora.detalle', registro_id=registro.id) }}"
+        class="action-link"
+    >
+        Ver detalle
+    </a>
+    <a href="{{ url_for('bitacora.consultar') }}" class="action-link action-link--ghost">
+        Regresar a consulta
+    </a>
+</div>
+
 {% endblock %}

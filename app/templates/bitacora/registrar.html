@@ -320,9 +320,14 @@
 </form>
 </div>
 
-<a href="{{ url_for('bitacora.index') }}">
-    Regresar
-</a>
+<div class="page-actions">
+    <a href="{{ url_for('bitacora.index') }}" class="action-link">
+        Regresar al inicio
+    </a>
+    <a href="{{ url_for('bitacora.consultar') }}" class="action-link action-link--ghost">
+        Ir a consultar
+    </a>
+</div>
 
 {% endblock %}
 

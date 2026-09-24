@@ -1,94 +1,76 @@
-{% extends 'base.html' %}
-
-{% block title %}
-    Bitácora
-{% endblock %}
-
-{% block content %}
-
-<header class="page-header">
-    <h1>Bitácora</h1>
-    <h2>Bienvenido, {{ usuario.nombre }}</h2>
-    <p>Usuario: {{ usuario.usuario }}</p>
-    <p>Rol: {{ usuario.rol }}</p>
-</header>
-
-<div class="dashboard-actions">
-    <a href="{{ url_for('bitacora.consultar') }}" class="action-link">
-        Consultar bitácora
-    </a>
-    <a href="{{ url_for('bitacora.registrar') }}" class="action-link action-link--primary">
-        Registrar entrada
-    </a>
-    {% if current_user.es_admin() %}
-        <a href="{{ url_for('admin.index') }}" class="action-link">
-            Administración
-        </a>
-    {% endif %}
-</div>
-
-<section class="table-section">
-    <h2>Personas dentro</h2>
-
-    {% if registros_activos %}
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>No.</th>
-                    <th>Fecha</th>
-                    <th>Entrada</th>
-                    <th>Personal</th>
-                    <th>Empresa</th>
-                    <th>Nave</th>
-                    <th>Área</th>
-                    <th>Código</th>
-                    <th>Acción</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                {% for registro in registros_activos %}
-                    <tr>
-                        <td>{{ registro.numero }}</td>
-                        <td>{{ registro.fecha }}</td>
-                        <td>{{ registro.hora_entrada }}</td>
-                        <td>{{ registro.tipo_personal }}: {{ registro.nombre }}</td>
-                        <td>{{ registro.empresa }}</td>
-                        <td>{{ registro.nave.codigo }}</td>
-                        <td>{{ registro.area.nombre }}</td>
-                        <td>{{ registro.codigo_requerimiento }}</td>
-                        <td>
-                            <form
-                                method="POST"
-                                action="{{ url_for('bitacora.salida', registro_id=registro.id) }}"
-                                class="form-inline"
-                            >
-                                <input
-                                    type="hidden"
-                                    name="csrf_token"
-                                    value="{{ csrf_token() }}"
-                                >
-                                <button
-                                    type="submit"
-                                    class="btn-gold btn-gold--primary btn-gold--compact"
-                                >
-                                    <span class="btn-gold__label">Registrar salida</span>
-                                </button>
-                            </form>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p class="empty-state">No hay personas actualmente dentro.</p>
-    {% endif %}
-</section>
-
-<div class="page-actions">
-    <a href="{{ url_for('auth.logout') }}" class="action-link action-link--ghost">
-        Cerrar sesión
-    </a>
-</div>
-
-{% endblock %}
+{% extends 'base.html' %}
+
+{% block title %}
+    Bitácora
+{% endblock %}
+
+{% block content %}
+
+<header class="page-header">
+    <h1>Bitácora</h1>
+    <h2>Bienvenido, {{ usuario.nombre }}</h2>
+    <p>Usuario: {{ usuario.usuario }}</p>
+    <p>Rol: {{ usuario.rol }}</p>
+</header>
+
+<section class="table-section">
+    <h2>Personas dentro</h2>
+
+    {% if registros_activos %}
+        <div class="table-scroll">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>No.</th>
+                    <th>Fecha</th>
+                    <th>Entrada</th>
+                    <th>Personal</th>
+                    <th>Empresa</th>
+                    <th>Nave</th>
+                    <th>Área</th>
+                    <th>Código</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for registro in registros_activos %}
+                    <tr>
+                        <td>{{ registro.numero }}</td>
+                        <td>{{ registro.fecha }}</td>
+                        <td>{{ registro.hora_entrada }}</td>
+                        <td>{{ registro.tipo_personal }}: {{ registro.nombre }}</td>
+                        <td>{{ registro.empresa }}</td>
+                        <td>{{ registro.nave.codigo }}</td>
+                        <td>{{ registro.area.nombre }}</td>
+                        <td>{{ registro.codigo_requerimiento }}</td>
+                        <td>
+                            <form
+                                method="POST"
+                                action="{{ url_for('bitacora.salida', registro_id=registro.id) }}"
+                                class="form-inline"
+                            >
+                                <input
+                                    type="hidden"
+                                    name="csrf_token"
+                                    value="{{ csrf_token() }}"
+                                >
+                                <button
+                                    type="submit"
+                                    class="btn-gold btn-gold--primary btn-gold--compact"
+                                >
+                                    <span class="btn-gold__label">Registrar salida</span>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        </div>
+    {% else %}
+        <p class="empty-state">No hay personas actualmente dentro.</p>
+    {% endif %}
+</section>
+
+{% endblock %}

@@ -7,11 +7,7 @@
 
 <header class="page-header">
     <h1>Consultar bitácora</h1>
-    <div class="dashboard-actions">
-        <a href="{{ url_for('bitacora.registrar') }}" class="action-link action-link--primary">
-            Registrar entrada
-        </a>
-    </div>
+    <p>Busca registros por fecha, empresa, nave, área y más.</p>
 </header>
 
 <div class="form-panel form-panel--wide">
@@ -282,6 +278,7 @@
     <strong>{{ paginacion.total }}</strong>
 </p>
 
+<div class="table-scroll">
 <table class="data-table">
 
     <thead>
@@ -437,12 +434,13 @@
                 <td>
 
                     <a
+                        class="table-action-link"
                         href="{{ url_for(
                             'bitacora.detalle',
                             registro_id=registro.id
                         ) }}"
                     >
-                        Ver
+                        Ver detalle
                     </a>
 
                 </td>
@@ -466,64 +464,54 @@
     </tbody>
 
 </table>
+</div>
 
-<br>
+<nav class="pagination" aria-label="Paginación de resultados">
+    {% if paginacion.has_prev %}
+        <a
+            class="pagination__link"
+            href="{{ url_for(
+                'bitacora.consultar',
+                pagina=paginacion.prev_num,
+                fecha_inicio=request.args.get('fecha_inicio'),
+                fecha_fin=request.args.get('fecha_fin'),
+                empresa=request.args.get('empresa'),
+                nave_id=request.args.get('nave_id'),
+                area_id=request.args.get('area_id'),
+                tipo_id=request.args.get('tipo_id'),
+                codigo=request.args.get('codigo'),
+                nombre=request.args.get('nombre'),
+                auditor_id=request.args.get('auditor_id')
+            ) }}"
+        >
+            ← Anterior
+        </a>
+    {% endif %}
 
-<!-- ========================================================= -->
-<!-- PAGINACION -->
-<!-- ========================================================= -->
+    <span class="pagination__status">
+        Página {{ paginacion.page }} de {{ paginacion.pages }}
+    </span>
 
-{% if paginacion.has_prev %}
-
-    <a
-        href="{{ url_for(
-            'bitacora.consultar',
-            pagina=paginacion.prev_num,
-            fecha_inicio=request.args.get('fecha_inicio'),
-            fecha_fin=request.args.get('fecha_fin'),
-            empresa=request.args.get('empresa'),
-            nave_id=request.args.get('nave_id'),
-            area_id=request.args.get('area_id'),
-            tipo_id=request.args.get('tipo_id'),
-            codigo=request.args.get('codigo'),
-            nombre=request.args.get('nombre'),
-            auditor_id=request.args.get('auditor_id')
-        ) }}"
-    >
-        ← Anterior
-    </a>
-
-{% endif %}
-
-&nbsp;
-
-Página
-{{ paginacion.page }}
-de
-{{ paginacion.pages }}
-
-&nbsp;
-
-{% if paginacion.has_next %}
-
-    <a
-        href="{{ url_for(
-            'bitacora.consultar',
-            pagina=paginacion.next_num,
-            fecha_inicio=request.args.get('fecha_inicio'),
-            fecha_fin=request.args.get('fecha_fin'),
-            empresa=request.args.get('empresa'),
-            nave_id=request.args.get('nave_id'),
-            area_id=request.args.get('area_id'),
-            tipo_id=request.args.get('tipo_id'),
-            codigo=request.args.get('codigo'),
-            nombre=request.args.get('nombre'),
-            auditor_id=request.args.get('auditor_id')
-        ) }}"
-    >
-        Siguiente →
-    </a>
-
-{% endif %}
+    {% if paginacion.has_next %}
+        <a
+            class="pagination__link"
+            href="{{ url_for(
+                'bitacora.consultar',
+                pagina=paginacion.next_num,
+                fecha_inicio=request.args.get('fecha_inicio'),
+                fecha_fin=request.args.get('fecha_fin'),
+                empresa=request.args.get('empresa'),
+                nave_id=request.args.get('nave_id'),
+                area_id=request.args.get('area_id'),
+                tipo_id=request.args.get('tipo_id'),
+                codigo=request.args.get('codigo'),
+                nombre=request.args.get('nombre'),
+                auditor_id=request.args.get('auditor_id')
+            ) }}"
+        >
+            Siguiente →
+        </a>
+    {% endif %}
+</nav>
 
 {% endblock %}

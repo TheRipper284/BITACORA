@@ -19,9 +19,54 @@
 </head>
 <body class="{% block body_class %}{% endblock %}">
     <header class="app-header" role="banner">
-        <div class="app-header__brand">
-            <span class="app-header__mark" aria-hidden="true"></span>
-            <span class="app-header__title">Bitácora de acceso</span>
+        <div class="app-header__inner">
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('bitacora.index') }}" class="app-header__brand">
+                    <span class="app-header__mark" aria-hidden="true"></span>
+                    <span class="app-header__title">Bitácora de acceso</span>
+                </a>
+
+                <nav class="app-nav" aria-label="Navegación principal">
+                    <a
+                        href="{{ url_for('bitacora.index') }}"
+                        class="app-nav__link{% if request.endpoint == 'bitacora.index' %} is-active{% endif %}"
+                    >
+                        Inicio
+                    </a>
+                    <a
+                        href="{{ url_for('bitacora.consultar') }}"
+                        class="app-nav__link{% if request.endpoint in ('bitacora.consultar', 'bitacora.detalle', 'bitacora.editar') %} is-active{% endif %}"
+                    >
+                        Consultar
+                    </a>
+                    <a
+                        href="{{ url_for('bitacora.registrar') }}"
+                        class="app-nav__link{% if request.endpoint == 'bitacora.registrar' %} is-active{% endif %}"
+                    >
+                        Registrar
+                    </a>
+                    {% if current_user.es_admin() %}
+                        <a
+                            href="{{ url_for('admin.index') }}"
+                            class="app-nav__link{% if request.endpoint and request.endpoint.startswith('admin.') %} is-active{% endif %}"
+                        >
+                            Admin
+                        </a>
+                    {% endif %}
+                </nav>
+
+                <div class="app-header__user">
+                    <span class="app-header__user-name">{{ current_user.nombre }}</span>
+                    <a href="{{ url_for('auth.logout') }}" class="app-nav__link app-nav__link--muted">
+                        Salir
+                    </a>
+                </div>
+            {% else %}
+                <div class="app-header__brand">
+                    <span class="app-header__mark" aria-hidden="true"></span>
+                    <span class="app-header__title">Bitácora de acceso</span>
+                </div>
+            {% endif %}
         </div>
     </header>
     <main class="page {% block page_class %}{% endblock %}">

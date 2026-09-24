@@ -1,5 +1,4 @@
-from flask import Flask
-from flask_login import current_user
+from flask import Flask, redirect, url_for
 from flask_wtf import CSRFProtect
 
 from config import Config
@@ -30,6 +29,10 @@ def create_app():
     app.register_blueprint(admin_bp)
     app.register_blueprint(reportes_bp)
 
+    @app.route("/")
+    def root():
+        return redirect(url_for("bitacora.index"))
+
     @app.errorhandler(403)
     def accero_denegado(error):
         from flask import render_template
@@ -37,5 +40,11 @@ def create_app():
         return render_template(
             "403.html"
         ),403
+
+    @app.errorhandler(404)
+    def pagina_no_encontrada(error):
+        from flask import render_template
+
+        return render_template("404.html"), 404
 
     return app

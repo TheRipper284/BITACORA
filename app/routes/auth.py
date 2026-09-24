@@ -27,7 +27,7 @@ def login():
         if not usuario_db:
 
             flash(
-                "Usuario o contraseña incorreta...😥😥",
+                "Usuario o contraseña incorrecta.",
                 "error"
             )
 
@@ -38,7 +38,7 @@ def login():
         if not usuario_db.activo:
 
             flash(
-                "El usuario esta desactivado.😥",
+                "El usuario está desactivado.",
                 "error"
             )
 
@@ -48,7 +48,7 @@ def login():
 
         if not usuario_db.verificar_password(password):
             flash(
-                "Usuario o contraseña incorrecta.😥😥",
+                "Usuario o contraseña incorrecta.",
                 "error"
             )
 

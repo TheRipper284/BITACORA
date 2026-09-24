@@ -1,0 +1,98 @@
+.detail-panel {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    padding: var(--space-xl);
+    position: relative;
+}
+
+.detail-panel::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: var(--space-lg);
+    right: var(--space-lg);
+    height: 2px;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        var(--color-accent),
+        transparent
+    );
+}
+
+.detail-panel__status {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-lg);
+}
+
+.detail-grid {
+    display: grid;
+    gap: var(--space-md);
+}
+
+@media (min-width: 640px) {
+    .detail-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+.detail-grid--single {
+    grid-template-columns: 1fr;
+}
+
+.detail-item {
+    padding: var(--space-md);
+    background: var(--color-surface-elevated);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+}
+
+.detail-item__label {
+    display: block;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text-dim);
+    margin-bottom: var(--space-xs);
+}
+
+.detail-item__value {
+    color: var(--color-chrome);
+    font-size: 0.95rem;
+    word-break: break-word;
+}
+
+.detail-item--wide {
+    grid-column: 1 / -1;
+}
+
+.detail-section {
+    margin-top: var(--space-xl);
+    padding-top: var(--space-lg);
+    border-top: 1px solid var(--color-border);
+}
+
+.detail-section:first-of-type {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
+}
+
+.detail-section h2 {
+    margin-bottom: var(--space-md);
+}
+
+.detail-comment {
+    margin: 0;
+    padding: var(--space-md);
+    background: var(--color-bg-subtle);
+    border-radius: var(--radius);
+    border: 1px solid var(--color-border);
+    color: var(--color-text-muted);
+    white-space: pre-wrap;
+}

@@ -602,7 +602,7 @@ def detalle(registro_id):
 
         flash(
             "El registro no existe.",
-            "danger"
+            "error"
         )
 
         return redirect(
@@ -635,7 +635,7 @@ def editar(registro_id):
     if registro is None:
         flash(
             "El registro no existe.",
-            "danger"
+            "error"
         )
         return redirect(
             url_for(
@@ -1029,7 +1029,7 @@ def editar(registro_id):
 
             flash(
                 f"No se pudo actualizar el registro: {error}",
-                "danger"
+                "error"
             )
 
         except Exception as error:
@@ -1048,7 +1048,7 @@ def editar(registro_id):
 
             flash(
                 "No fue posible actualizar el registro.",
-                "danger"
+                "error"
             )
 
     return render_template(

@@ -308,3 +308,6 @@ def eliminar_auditor(
             "admin.auditores"
         )
     )
+
+
+from app.routes import admin_catalogos, admin_usuarios  # noqa: E402, F401
